@@ -21,15 +21,14 @@ namespace Breakout3D.Framework
         public TransformData(Vec3 position, Vec3 rotationAxis, float angle, Vec3 scale)
         {
             Position = position;
-            Rotation = Mat3.GetRotationMatrix(rotationAxis, angle);
+            Rotation = Mat3.Rotation(rotationAxis, angle);
             Scale = new Mat3(scale);
         }
     }
 
     public class Transform : UniformBuffer<TransformData>
     {
-        public const uint TRANSFORM_BINDING = 1;
-        public override uint Binding => TRANSFORM_BINDING;
+        public override uint Binding => Buffers.TRANSFORM_BINDING;
         
         public Transform(): base(new TransformData(Vec3.Zero, Mat3.Identity, Vec3.Unit)){}
         
@@ -55,7 +54,7 @@ namespace Breakout3D.Framework
 
         public void Rotate(Vec3 rotationAxis, float angle)
         {
-            m_Data.Rotation *= Mat3.GetRotationMatrix(rotationAxis, angle);
+            m_Data.Rotation *= Mat3.Rotation(rotationAxis, angle);
             UpdateData();
         }
     }

@@ -36,6 +36,13 @@ namespace Breakout3D.Libraries
             Y = y;
             Z = z;
         }
+        
+        public Vec3(float x)
+        {
+            X = x;
+            Y = x;
+            Z = x;
+        }
 
         public static Vec3 Cross(Vec3 first, Vec3 second)
         {

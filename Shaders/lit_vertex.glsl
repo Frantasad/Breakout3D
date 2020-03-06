@@ -31,5 +31,6 @@ void main() {
 	outData.tex_coord = tex_coord;
 	
     vec3 newPos = (transform.scale * transform.rotation * position) + transform.position;
-	gl_Position = vec4(newPos, 1.0);
+    
+	gl_Position = camera.projection * camera.view * vec4(newPos, 1.0);
 }

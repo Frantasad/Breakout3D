@@ -32,8 +32,7 @@ namespace Breakout3D.Framework
 
     public class Material : UniformBuffer<PhongMaterial>
     {
-        public const uint MATERIAL_BINDING = 2;
-        public override uint Binding => MATERIAL_BINDING;
+        public override uint Binding => Buffers.MATERIAL_BINDING;
         
         public Material(): base(new PhongMaterial(Vec3.Unit, Vec3.Unit, Vec3.Unit, 0.0f, 1.0f)){}
     }

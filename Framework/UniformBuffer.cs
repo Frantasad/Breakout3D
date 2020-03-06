@@ -5,10 +5,16 @@ using OpenGL;
 
 namespace Breakout3D.Framework
 {
+    public static class Buffers
+    {
+        public const uint CAMERA_BINDING = 0;
+        public const uint TRANSFORM_BINDING = 1;
+        public const uint MATERIAL_BINDING = 2;
+    }
+    
     public abstract class UniformBuffer<T> : IDisposable where T : struct
     {
         protected T m_Data;
-
         public T Data
         {
             get => m_Data;

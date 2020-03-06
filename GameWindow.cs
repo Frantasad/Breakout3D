@@ -48,7 +48,7 @@ namespace Breakout3D
             m_BallTransform.Init();
             m_BallTransform.Data = new TransformData(Vec3.Zero, Mat3.Identity, Vec3.Unit / 200);
 
-            m_Triangle = TriangleGeometry.LoadSimpleObj("Models/CircleFloor.obj");
+            m_Triangle = GeometryGenerator.LoadSimpleObj("Models/CircleFloor.obj");
             Gl.ClearColor(0.1f, 0.1f, 0.12f, 0.1f);
         }
 

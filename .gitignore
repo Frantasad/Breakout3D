@@ -25,6 +25,7 @@
 *.user
 .vscode/
 .vs/
+.idea/
 [Bb]in/
 [Oo]bj/
 _UpgradeReport_Files/
@@ -45,7 +46,6 @@ Desktop.ini
 *_p.c
 *.ilk
 *.meta
-*.obj
 *.pch
 *.pdb
 *.pgc

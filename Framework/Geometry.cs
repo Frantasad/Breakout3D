@@ -43,9 +43,9 @@ namespace Breakout3D.Framework
         
         public static Geometry GenerateGeometry(float[] vertices, float[] normals, float[] texCoords, PrimitiveType primitiveType = PrimitiveType.Triangles)
         {
-            if (vertices.Length%3 != 0 || normals.Length%3 != 0 || texCoords.Length%3 != 0)
+            if (vertices.Length%3 != 0 || normals.Length%3 != 0 || texCoords.Length%2 != 0)
             {
-                throw new InvalidDataException();
+                throw new ArgumentException($"Invalid count of input variables");
             }
             var geometry = new Geometry(primitiveType);
             geometry.m_VerticesCount = vertices.Length/3;
@@ -69,11 +69,12 @@ namespace Breakout3D.Framework
 
             geometry.m_TexCoordBuffer = Gl.GenBuffer();
             Gl.BindBuffer(BufferTarget.ArrayBuffer, geometry.m_TexCoordBuffer);
-            Gl.BufferData(BufferTarget.ArrayBuffer, (uint) (sizeof(float) * texCoords.Length),
-                texCoords, BufferUsage.StaticDraw);
+            Gl.BufferData(BufferTarget.ArrayBuffer, (uint) (sizeof(float) * texCoords.Length), texCoords, 
+                BufferUsage.StaticDraw);
             Gl.VertexAttribPointer(TEX_COORD_LOCATION, 2, VertexAttribType.Float, false, 0, IntPtr.Zero);
             Gl.EnableVertexAttribArray(TEX_COORD_LOCATION);
-
+            
+            Gl.BindBuffer(BufferTarget.ArrayBuffer, 0);
             return geometry;
         }
     }

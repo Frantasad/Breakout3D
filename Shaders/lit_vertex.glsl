@@ -32,5 +32,5 @@ void main() {
 	
     vec3 newPos = (transform.scale * transform.rotation * position) + transform.position;
     
-	gl_Position = camera.projection * camera.view * vec4(newPos, 1.0);
+	gl_Position = camera.view * vec4(newPos, 1.0);
 }

@@ -54,7 +54,7 @@ namespace Breakout3D.Framework
 
         public void Rotate(Vec3 rotationAxis, float angle)
         {
-            m_Data.Rotation *= Mat3.Rotation(rotationAxis, angle);
+            m_Data.Rotation = Mat3.Rotation(rotationAxis, angle) * m_Data.Rotation;
             UpdateData();
         }
     }

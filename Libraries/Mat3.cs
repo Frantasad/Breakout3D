@@ -1,4 +1,5 @@
 ﻿using System;
+using Breakout3D.Framework;
 
 namespace Breakout3D.Libraries
 {
@@ -60,10 +61,11 @@ namespace Breakout3D.Libraries
         
         public static Mat3 Rotation(Vec3 rotationAxis, float angle)
         {
+            var radAngle = MathHelper.ToRadians(angle);
             rotationAxis = rotationAxis.Normalized;
 
-            var c = (float) Math.Cos(angle);
-            var s = (float) Math.Sin(angle);
+            var c = (float) Math.Cos(radAngle);
+            var s = (float) Math.Sin(radAngle);
             var t = 1 - c;
             var x = rotationAxis.X;
             var y = rotationAxis.Y;

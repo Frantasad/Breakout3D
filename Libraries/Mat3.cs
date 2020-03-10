@@ -45,8 +45,8 @@ namespace Breakout3D.Libraries
         }
         public float this[int i, int j]
         {
-            get => this[i + j * 3];
-            set => this[i + j * 3] = value;
+            get => this[i * 3 + j];
+            set => this[i * 3 + j] = value;
         }
 
         public Mat3 Transposed => Transpose(this);

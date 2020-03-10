@@ -5,7 +5,7 @@ namespace Breakout3D.Libraries
 {
     public struct Vec3
     {
-        public const float Epsilon = 0.00001f;
+        private const float Epsilon = 0.00001f;
         
         public static readonly Vec3 Zero = new Vec3(0, 0, 0);
         public static readonly Vec3 Unit = new Vec3(1, 1, 1);
@@ -17,7 +17,7 @@ namespace Breakout3D.Libraries
         public readonly float Y;
         public readonly float Z;
 
-        public float Magnitude => (float) Math.Sqrt(X * X + Y * Y + Z * Z);
+        public float Magnitude => (float) Math.Sqrt(X*X + Y*Y + Z*Z);
         
         public Vec3 Normalized
         {

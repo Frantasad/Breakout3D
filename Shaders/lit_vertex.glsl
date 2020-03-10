@@ -26,11 +26,11 @@ layout (std140, binding = 1) uniform Transform
 } transform;	
 
 void main() {
-    outData.position_ws = position;
-	outData.normal_ws = normal;
-	outData.tex_coord = tex_coord;
-	
     vec3 newPos = (transform.scale * transform.rotation * position) + transform.position;
     
-	gl_Position = camera.view * vec4(newPos, 1.0);
+    outData.position_ws = newPos;
+	outData.normal_ws = transform.rotation * normal;
+	outData.tex_coord = tex_coord;    
+    
+	gl_Position = camera.projection * camera.view * vec4(newPos, 1.0);
 }

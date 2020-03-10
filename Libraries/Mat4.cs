@@ -13,22 +13,10 @@ namespace Breakout3D.Libraries
             0, 0, 1, 0,
             0, 0, 0, 1);
 
-        public float x00;
-        public float x01;
-        public float x02;
-        public float x03;
-        public float x10;
-        public float x11;
-        public float x12;
-        public float x13;
-        public float x20;
-        public float x21;
-        public float x22;
-        public float x23;
-        public float x30;
-        public float x31;
-        public float x32;
-        public float x33;
+        public float x00; public float x01; public float x02; public float x03;
+        public float x10; public float x11; public float x12; public float x13;
+        public float x20; public float x21; public float x22; public float x23;
+        public float x30; public float x31; public float x32; public float x33;
 
         public Mat4(
             float x00, float x01, float x02, float x03,
@@ -36,22 +24,10 @@ namespace Breakout3D.Libraries
             float x20, float x21, float x22, float x23,
             float x30, float x31, float x32, float x33)
         {
-            this.x00 = x00;
-            this.x01 = x01;
-            this.x02 = x02;
-            this.x03 = x03;
-            this.x10 = x10;
-            this.x11 = x11;
-            this.x12 = x12;
-            this.x13 = x13;
-            this.x20 = x20;
-            this.x21 = x21;
-            this.x22 = x22;
-            this.x23 = x23;
-            this.x30 = x30;
-            this.x31 = x31;
-            this.x32 = x32;
-            this.x33 = x33;
+            this.x00 = x00; this.x01 = x01; this.x02 = x02; this.x03 = x03;
+            this.x10 = x10; this.x11 = x11; this.x12 = x12; this.x13 = x13;
+            this.x20 = x20; this.x21 = x21; this.x22 = x22; this.x23 = x23;
+            this.x30 = x30; this.x31 = x31; this.x32 = x32; this.x33 = x33;
         }
 
         public Mat4(float value)
@@ -83,54 +59,22 @@ namespace Breakout3D.Libraries
             {
                 switch (i)
                 {
-                    case 0:
-                        x00 = value;
-                        break;
-                    case 1:
-                        x01 = value;
-                        break;
-                    case 2:
-                        x02 = value;
-                        break;
-                    case 3:
-                        x03 = value;
-                        break;
-                    case 4:
-                        x10 = value;
-                        break;
-                    case 5:
-                        x11 = value;
-                        break;
-                    case 6:
-                        x12 = value;
-                        break;
-                    case 7:
-                        x13 = value;
-                        break;
-                    case 8:
-                        x20 = value;
-                        break;
-                    case 9:
-                        x21 = value;
-                        break;
-                    case 10:
-                        x22 = value;
-                        break;
-                    case 11:
-                        x23 = value;
-                        break;
-                    case 12:
-                        x30 = value;
-                        break;
-                    case 13:
-                        x31 = value;
-                        break;
-                    case 14:
-                        x32 = value;
-                        break;
-                    case 15:
-                        x33 = value;
-                        break;
+                    case 0: x00 = value; break;
+                    case 1: x01 = value; break;
+                    case 2: x02 = value; break;
+                    case 3: x03 = value; break;
+                    case 4: x10 = value; break;
+                    case 5: x11 = value; break;
+                    case 6: x12 = value; break;
+                    case 7: x13 = value; break;
+                    case 8: x20 = value; break;
+                    case 9: x21 = value; break;
+                    case 10: x22 = value; break;
+                    case 11: x23 = value; break;
+                    case 12: x30 = value; break;
+                    case 13: x31 = value; break;
+                    case 14: x32 = value; break;
+                    case 15: x33 = value; break;
                     default: throw new IndexOutOfRangeException();
                 }
             }
@@ -138,8 +82,8 @@ namespace Breakout3D.Libraries
 
         public float this[int i, int j]
         {
-            get => this[i + j * 4];
-            set => this[i + j * 4] = value;
+            get => this[i * 4 + j];
+            set => this[i * 4 + j] = value;
         }
 
         public static Mat4 Perspective(float fov, float aspect, float zNear, float zFar)
@@ -162,17 +106,19 @@ namespace Breakout3D.Libraries
             return result;
         }
 
-        public static Mat4 LookAtView(Vec3 from, Vec3 to, Vec3 upVector)
+        public static Mat4 LookAt(Vec3 eye, Vec3 target, Vec3 up)
         {
-            var forward = (from - to).Normalized;
-            var right = Vec3.Cross(upVector.Normalized, forward);
-            var up = Vec3.Cross(forward, right);
-
-            return Inverse(new Mat4(
-                right.X, right.Y, right.Z, 0,
-                up.X, up.Y, up.Z, 0,
-                forward.X, forward.Y, forward.Z, 0,
-                from.X, from.Y, from.Z, 1));
+            var zAxis = (eye - target).Normalized;
+            var xAxis = Vec3.Cross(zAxis, up).Normalized;
+            var yAxis = Vec3.Cross(xAxis, zAxis);
+            zAxis = zAxis;
+            
+            return new Mat4(
+                xAxis.X, xAxis.Y, xAxis.Z, -Vec3.Dot(xAxis, eye),
+                yAxis.X, yAxis.Y, yAxis.Z, -Vec3.Dot(yAxis, eye),
+                zAxis.X, zAxis.Y, zAxis.Z, -Vec3.Dot(zAxis, eye),
+                0,0,0,1
+            );
         }
 
         public static Mat4 Inverse(Mat4 matrix)

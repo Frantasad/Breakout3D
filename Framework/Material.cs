@@ -23,8 +23,7 @@ namespace Breakout3D.Framework
         }
 
         public PhongMaterial(Vec3 color, bool whiteSpecular, float shininess, float alpha)
-            : this(color,
-                color,
+            : this(color, color,
                 (Math.Abs(shininess) < 0.0001f) ? Vec3.Zero : (whiteSpecular ? Vec3.Unit : color),
                 shininess,
                 alpha) {}

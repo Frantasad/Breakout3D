@@ -147,7 +147,7 @@ namespace Breakout3D.Libraries
             return result;
         }
         
-        public static Mat3 operator *(Mat3 matrix, Mat3 second)
+        public static Mat3 operator *(Mat3 first, Mat3 second)
         {
             var result = new Mat3();
             for (var x = 0; x < 3; x++)
@@ -155,7 +155,7 @@ namespace Breakout3D.Libraries
                 for (var y = 0; y < 3; y++)
                 {
                     var sum = 0f;
-                    var firstRow = matrix.GetRow(x).ToArray();
+                    var firstRow = first.GetRow(x).ToArray();
                     var secondCol = second.GetCol(y).ToArray();
                     for (var i = 0; i < 3; i++)
                     {
@@ -168,7 +168,7 @@ namespace Breakout3D.Libraries
             return result;
         }
         
-        public static Mat3 operator *(Mat3 matrix, float scalar)
+        public static Mat3 operator *(Mat3 first, float scalar)
         {
             var result = new Mat3();
             for (var x = 0; x < 3; x++)

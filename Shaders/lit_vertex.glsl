@@ -20,8 +20,8 @@ layout (std140, binding = 0) uniform CameraData
 
 layout (std140, binding = 1) uniform Transform
 {
+    mat3 rotation;
 	mat3 scale;
-	mat3 rotation;
 	vec3 position;
 } transform;	
 

@@ -43,13 +43,20 @@ namespace Breakout3D.Libraries
             Y = x;
             Z = x;
         }
-
+        
         public static Vec3 Cross(Vec3 first, Vec3 second)
         {
             return new Vec3(
                 first.Y * second.Z - first.Z * second.Y,
                 first.Z * second.X - first.X * second.Z,
                 first.X * second.Y - first.Y * second.X);
+        }
+
+        public static Vec3 Normal(Vec3 v0, Vec3 v1, Vec3 v2)
+        {
+            var a = v1 - v0;
+            var b = v2 - v0;
+            return Cross(a, b).Normalized;
         }
 
         public static float Dot(Vec3 first, Vec3 second)

@@ -11,7 +11,7 @@
 
     <ItemGroup>
       <PackageReference Include="OpenGL.Net" Version="0.8.4" />
-      <PackageReference Include="OpenGL.Net.CoreUI" Version="0.8.4" />
+      <PackageReference Include="OpenGL.Net.Math" Version="0.8.4" />
       <PackageReference Include="OpenGL.Net.WinForms" Version="0.8.4" />
     </ItemGroup>
 
@@ -26,6 +26,9 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="Models\Cube.obj">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Models\Sphere.obj">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

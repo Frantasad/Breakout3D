@@ -1,5 +1,6 @@
 ﻿using System;
 using Breakout3D.Framework;
+using OpenGL;
 
 namespace Breakout3D.Libraries
 {
@@ -86,39 +87,90 @@ namespace Breakout3D.Libraries
             set => this[i * 4 + j] = value;
         }
 
-        public static Mat4 Perspective(float fov, float aspect, float zNear, float zFar)
+        public static Mat4 Perspective(float fovy, float aspectRatio, float near, float far)
         {
-            var fovRad = MathHelper.ToRadians(fov);
-            if (!(Math.Abs(aspect - float.MinValue) > 0))
+            if (fovy <= 0.0 || fovy >= 180.0)
+                throw new ArgumentOutOfRangeException(nameof(fovy), "Not in range (0, 180)");
+            if (Math.Abs(near) < 1.40129846432482E-45)
+                throw new ArgumentOutOfRangeException(nameof(near), "Zero not allowed");
+            if (Math.Abs(far) < Math.Abs(near))
+                throw new ArgumentOutOfRangeException(nameof(far), "Less than near");
+            
+            var top = near * (float) Math.Tan(Angle.ToRadians(fovy / 2f));
+            var right = top * aspectRatio;
+            var left = -right;
+            var bottom = -top;
+            return new Mat4
             {
-                throw new ArgumentException();
-            }
-
-            var tanHalfFov = (float) Math.Tan(fovRad / 2);
-            var result = new Mat4
-            {
-                [0, 0] = 1 / (aspect * tanHalfFov),
-                [1, 1] = 1 / (tanHalfFov),
-                [2, 2] = -(zFar + zNear) / (zFar - zNear),
-                [2, 3] = -1,
-                [3, 2] = -(2 * zFar * zNear) / (zFar - zNear)
+                [0,0] = 2.0f * near / (right - left),
+                [1,1] = 2.0f * near / (top - bottom),
+                [2,0] = (right + left) / (right - left),
+                [2,1] = (top + bottom) / (top - bottom),
+                [2,2] = (-far - near) / ( far - near),
+                [2,3] = -1f,
+                [3,2] = -2.0f * far * near / (far - near)
             };
-            return result;
         }
-
-        public static Mat4 LookAt(Vec3 eye, Vec3 target, Vec3 up)
+        
+        public static Mat4 Translate(float x, float y, float z)
         {
-            var zAxis = (eye - target).Normalized;
-            var xAxis = Vec3.Cross(zAxis, up).Normalized;
-            var yAxis = Vec3.Cross(xAxis, zAxis);
-            zAxis = zAxis;
+            return new Mat4
+            {
+                [0,0] = 1f, 
+                [1,1] = 1f, 
+                [2,2] = 1f,
+                [3,3] = 1f, 
+                [3,0] = x,
+                [3,1] = y,
+                [3,2] = z
+            };
+        }
+        
+        public static Mat4 Scale(float x, float y, float z)
+        {
+            return new Mat4
+            {
+                [0,0] = x,
+                [1,1] = y,
+                [2,2]= z,
+                [3,3] = 1f
+            };
+        }
+        
+        public static Mat4 LookAt(Vec3 eye, Vec3 target, Vec3 upVector)
+        {
+            var f = (target - eye).Normalized;
+            var s = Vec3.Cross(f, upVector.Normalized);
+            var u = Vec3.Cross(s.Normalized, f);
             
             return new Mat4(
-                xAxis.X, xAxis.Y, xAxis.Z, -Vec3.Dot(xAxis, eye),
-                yAxis.X, yAxis.Y, yAxis.Z, -Vec3.Dot(yAxis, eye),
-                zAxis.X, zAxis.Y, zAxis.Z, -Vec3.Dot(zAxis, eye),
-                0,0,0,1
-            );
+                 s.X,  s.Y,  s.Z, 0,
+                 u.X,  u.Y,  u.Z, 0, 
+                -f.X, -f.Y, -f.Z, 0, 
+                0,0,0,1) * Translate(-eye.X, -eye.Y, -eye.Z);
+        }
+        
+        public static Mat4 operator *(Mat4 first, Mat4 second) 
+        { 
+            return new Mat4
+            {
+                [0,0] = (first[0,0] * second[0,0] + first[1,0] * second[0,1] + first[2,0] * second[0,2] + first[3,0] * second[0,3]),
+                [0,1] = (first[0,1] * second[0,0] + first[1,1] * second[0,1] + first[2,1] * second[0,2] + first[3,1] * second[0,3]),
+                [0,2] = (first[0,2] * second[0,0] + first[1,2] * second[0,1] + first[2,2] * second[0,2] + first[3,2] * second[0,3]),
+                [0,3] = (first[0,3] * second[0,0] + first[1,3] * second[0,1] + first[2,3] * second[0,2] + first[3,3] * second[0,3]),
+                [1,0] = (first[0,0] * second[1,0] + first[1,0] * second[1,1] + first[2,0] * second[1,2] + first[3,0] * second[1,3]),
+                [1,1] = (first[0,1] * second[1,0] + first[1,1] * second[1,1] + first[2,1] * second[1,2] + first[3,1] * second[1,3]),
+                [1,2] = (first[0,2] * second[1,0] + first[1,2] * second[1,1] + first[2,2] * second[1,2] + first[3,2] * second[1,3]),
+                [1,3] = (first[0,3] * second[1,0] + first[1,3] * second[1,1] + first[2,3] * second[1,2] + first[3,3] * second[1,3]),
+                [2,0] = (first[0,0] * second[2,0] + first[1,0] * second[2,1] + first[2,0] * second[2,2] + first[3,0] * second[2,3]),
+                [2,1] = (first[0,1] * second[2,0] + first[1,1] * second[2,1] + first[2,1] * second[2,2] + first[3,1] * second[2,3]),
+                [2,2] = (first[0,2] * second[2,0] + first[1,2] * second[2,1] + first[2,2] * second[2,2] + first[3,2] * second[2,3]), 
+                [2,3] = (first[0,3] * second[2,0] + first[1,3] * second[2,1] + first[2,3] * second[2,2] + first[3,3] * second[2,3]),
+                [3,0] = (first[0,0] * second[3,0] + first[1,0] * second[3,1] + first[2,0] * second[3,2] + first[3,0] * second[3,3]),
+                [3,1] = (first[0,1] * second[3,0] + first[1,1] * second[3,1] + first[2,1] * second[3,2] + first[3,1] * second[3,3]),
+                [3,2] = (first[0,2] * second[3,0] + first[1,2] * second[3,1] + first[2,2] * second[3,2] + first[3,2] * second[3,3]),
+                [3,3] = (first[0,3] * second[3,0] + first[1,3] * second[3,1] + first[2,3] * second[3,2] + first[3,3] * second[3,3]),
+            };
         }
 
         public static Mat4 Inverse(Mat4 matrix)

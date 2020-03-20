@@ -53,27 +53,19 @@ namespace Breakout3D
             m_DefaultMaterial.Data = new PhongMaterial(new Vec3(0.6f,0,0), true, 200.0f, 1.0f);
 
             m_BallTransform.Init();
-            m_BallTransform.Data = new TransformData(-Vec3.Forward*3, Mat3.Identity, Vec3.Unit);
+            m_BallTransform.Data = new TransformData(Vec3.Zero, Mat3.Identity, Vec3.Unit);
             
             m_SunLight.Init();
+            m_SunLight.Position = new Vec3(5,10,0);
 
+            Gl.Viewport(0, 0, Width, Height);
             m_Camera.Init();
             m_Camera.SetCamera(
-                Mat4.Perspective(45, Width/(float)Height, 0.1f, 1000f),
-                Mat4.LookAt(new Vec3(0, 10, 10), Vec3.Zero, Vec3.Up));
-            
-            var t = new Mat4(
-                1,2,3,4,
-                5,6,7,8,
-                9,10,11,12,
-                13,14,15,16);
-            var x = Mat4.LookAt(new Vec3(0, 100, 100), Vec3.Zero, Vec3.Up);
-            Console.Out.WriteLine(x);
-            
-            
-            //m_Triangle = GeometryGenerator.LoadSimpleObj("Models/Cube.obj");
-            m_Triangle = GeometryGenerator.SingleTriangle();
-            Gl.ClearColor(0.1f, 0.1f, 0.12f, 0.1f);
+                Mat4.Perspective(45.0f, Width/(float)Height, 0.1f, 1000.0f),
+                Mat4.LookAt(new Vec3(0, 0, 3), new Vec3(0, 0, 0), Vec3.Up));
+
+             m_Triangle = GeometryGenerator.Sphere();
+             Gl.ClearColor(0.1f, 0.1f, 0.12f, 0.1f);
         }
 
         private void RenderScene(object sender, GlControlEventArgs e)
@@ -87,8 +79,10 @@ namespace Breakout3D
             HandleInput();
             UpdateScene();
             
-            Gl.Viewport(0, 0, Width, Height);
             Gl.Clear(ClearBufferMask.ColorBufferBit);
+            Gl.ClearDepth(1.0);
+            Gl.Clear(ClearBufferMask.DepthBufferBit);
+            Gl.Enable(EnableCap.DepthTest);
             
             m_Program.Use();
             
@@ -104,11 +98,8 @@ namespace Breakout3D
         private void UpdateScene()
         {
             m_BallTransform.Rotate(Vec3.Up, 0.5f * m_XAxis * m_DeltaTime);
-            m_Center += Vec3.Up * m_YAxis * 0.01f;
-            m_Camera.SetCamera(
-                Mat4.Perspective(45, Width/(float)Height, 0.1f, 1000f),
-                Mat4.LookAt(m_Center, new Vec3(0,0,-1), Vec3.Up));
-            
+            m_Center += Vec3.Forward * m_YAxis * 0.1f;
+ 
         }
 
         private void HandleInput()
@@ -116,26 +107,26 @@ namespace Breakout3D
             m_XAxis = 0;
             if (PressedKeys[Keys.Left])
             {
-                StatusText.Text = "Left pressed";
+                StatusText.Text = "Left";
                 m_XAxis = -1;
             }
 
             if (PressedKeys[Keys.Right])
             {
-                StatusText.Text = "Right pressed";
+                StatusText.Text = "Right";
                 m_XAxis = 1;
             } 
             
             m_YAxis = 0;
             if (PressedKeys[Keys.Down])
             {
-                StatusText.Text = "Left pressed";
+                StatusText.Text = "Down";
                 m_YAxis = -1;
             }
 
             if (PressedKeys[Keys.Up])
             {
-                StatusText.Text = "Right pressed";
+                StatusText.Text = "Up";
                 m_YAxis = 1;
             } 
         }
@@ -172,7 +163,8 @@ namespace Breakout3D
 
         private void GameWindow_Resize(object sender, EventArgs e)
         {
-            m_Camera.SetProjection(Mat4.Perspective(45, (float)Width/Height, -10f, 1000f));
+            Gl.Viewport(0, 0, Width, Height);
+            m_Camera.SetProjection(Mat4.Perspective(45.0f, Width/(float)Height, 0.1f, 1000.0f));
         }
     }
 }

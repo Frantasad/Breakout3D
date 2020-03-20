@@ -24,9 +24,19 @@ namespace Breakout3D.Framework
         public override uint Binding => Buffers.LIGHT_BINDING;
         
         public Light(): base(new LightData(
-            new Vec3(1, 0, 0f), 
+            new Vec3(0, 10, 0f), 
             new Vec3(0.1f, 0.1f, 0.1f),
             new Vec3(0.7f, 0.7f, 0.7f),
             new Vec3(0.7f, 0.7f, 0.7f))){}
+        
+        public Vec3 Position
+        {
+            get => m_Data.Position;
+            set
+            {
+                m_Data.Position = value;
+                UpdateData();
+            } 
+        }
     }
 }

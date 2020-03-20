@@ -45,6 +45,6 @@ void main() {
     vec3 spe = Ispe * sun.specular;
 
 	vec3 final_color = material.ambient * amb + material.diffuse * dif + material.specular * spe;
-	
+
     gl_FragColor = vec4(final_color, 1.0);
 }

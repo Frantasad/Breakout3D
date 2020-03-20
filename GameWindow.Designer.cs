@@ -48,13 +48,13 @@ namespace Breakout3D
             this.RenderControl.AnimationTimer = false;
             this.RenderControl.BackColor = System.Drawing.Color.DimGray;
             this.RenderControl.ColorBits = ((uint) (24u));
-            this.RenderControl.DepthBits = ((uint) (0u));
+            this.RenderControl.DepthBits = ((uint) (16u));
+            this.RenderControl.MultisampleBits = ((uint) (0u));
+            this.RenderControl.StencilBits = ((uint) (0u));
             this.RenderControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RenderControl.Location = new System.Drawing.Point(0, 0);
-            this.RenderControl.MultisampleBits = ((uint) (0u));
             this.RenderControl.Name = "RenderControl";
             this.RenderControl.Size = new System.Drawing.Size(853, 494);
-            this.RenderControl.StencilBits = ((uint) (0u));
             this.RenderControl.TabIndex = 0;
             this.RenderControl.ContextCreated += new System.EventHandler<OpenGL.GlControlEventArgs>(this.InitScene);
             this.RenderControl.ContextDestroying +=

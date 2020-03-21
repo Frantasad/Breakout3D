@@ -14,10 +14,10 @@ namespace Breakout3D.Libraries
             0, 0, 1, 0,
             0, 0, 0, 1);
 
-        public float x00; public float x01; public float x02; public float x03;
-        public float x10; public float x11; public float x12; public float x13;
-        public float x20; public float x21; public float x22; public float x23;
-        public float x30; public float x31; public float x32; public float x33;
+        public float x00; public float x10; public float x20; public float x30;
+        public float x01; public float x11; public float x21; public float x31;
+        public float x02; public float x12; public float x22; public float x32;
+        public float x03; public float x13; public float x23; public float x33;
 
         public Mat4(
             float x00, float x01, float x02, float x03,
@@ -33,14 +33,15 @@ namespace Breakout3D.Libraries
 
         public Mat4(float value)
         {
-            x00 = x01 = x02 = x03 = x10 = x11 = x12 = x13 = x20 = x21 = x22 = x23 = x30 = x31 = x32 = x33 = 0;
-            for (var x = 0; x < 4; x++)
-            {
-                for (var y = 0; y < 4; y++)
-                {
-                    this[x, y] = value;
-                }
-            }
+            x00 = x01 = x02 = x03 = x10 = x11 = x12 = x13 = x20 = x21 = x22 = x23 = x30 = x31 = x32 = x33 = value;
+        }
+        
+        public Mat4(Mat3 matrix)
+        {
+            x00 = matrix.x00; x01 = matrix.x01; x02 = matrix.x02; x03 = 0;
+            x10 = matrix.x10; x11 = matrix.x11; x12 = matrix.x12; x13 = 0;
+            x20 = matrix.x20; x21 = matrix.x21; x22 = matrix.x22; x23 = 0;
+            x30 = 0;          x31 = 0;          x32 = 0;          x33 = 1;
         }
 
         public float this[int i]
@@ -49,9 +50,9 @@ namespace Breakout3D.Libraries
             {
                 return i switch
                 {
-                    0 => x00, 1 => x01, 2 => x02, 3 => x03,
-                    4 => x10, 5 => x11, 6 => x12, 7 => x13,
-                    8 => x20, 9 => x21, 10 => x22, 11 => x23,
+                     0 => x00,  1 => x01,  2 => x02,  3 => x03,
+                     4 => x10,  5 => x11,  6 => x12,  7 => x13,
+                     8 => x20,  9 => x21, 10 => x22, 11 => x23,
                     12 => x30, 13 => x31, 14 => x32, 15 => x33,
                     _ => throw new IndexOutOfRangeException()
                 };
@@ -60,22 +61,10 @@ namespace Breakout3D.Libraries
             {
                 switch (i)
                 {
-                    case 0: x00 = value; break;
-                    case 1: x01 = value; break;
-                    case 2: x02 = value; break;
-                    case 3: x03 = value; break;
-                    case 4: x10 = value; break;
-                    case 5: x11 = value; break;
-                    case 6: x12 = value; break;
-                    case 7: x13 = value; break;
-                    case 8: x20 = value; break;
-                    case 9: x21 = value; break;
-                    case 10: x22 = value; break;
-                    case 11: x23 = value; break;
-                    case 12: x30 = value; break;
-                    case 13: x31 = value; break;
-                    case 14: x32 = value; break;
-                    case 15: x33 = value; break;
+                    case  0: x00 = value; break; case  1: x01 = value; break; case  2: x02 = value; break; case  3: x03 = value; break;
+                    case  4: x10 = value; break; case  5: x11 = value; break; case  6: x12 = value; break; case  7: x13 = value; break;
+                    case  8: x20 = value; break; case  9: x21 = value; break; case 10: x22 = value; break; case 11: x23 = value; break;
+                    case 12: x30 = value; break; case 13: x31 = value; break; case 14: x32 = value; break; case 15: x33 = value; break;
                     default: throw new IndexOutOfRangeException();
                 }
             }
@@ -104,15 +93,15 @@ namespace Breakout3D.Libraries
             {
                 [0,0] = 2.0f * near / (right - left),
                 [1,1] = 2.0f * near / (top - bottom),
-                [2,0] = (right + left) / (right - left),
-                [2,1] = (top + bottom) / (top - bottom),
+                [0,2] = (right + left) / (right - left),
+                [1,2] = (top + bottom) / (top - bottom),
                 [2,2] = (-far - near) / ( far - near),
-                [2,3] = -1f,
-                [3,2] = -2.0f * far * near / (far - near)
+                [3,2] = -1f,
+                [2,3] = -2.0f * far * near / (far - near)
             };
         }
         
-        public static Mat4 Translate(float x, float y, float z)
+        public static Mat4 Translation(Vec3 vector)
         {
             return new Mat4
             {
@@ -120,107 +109,98 @@ namespace Breakout3D.Libraries
                 [1,1] = 1f, 
                 [2,2] = 1f,
                 [3,3] = 1f, 
-                [3,0] = x,
-                [3,1] = y,
-                [3,2] = z
+                [0,3] = vector.X,
+                [1,3] = vector.Y,
+                [2,3] = vector.Z
             };
         }
         
-        public static Mat4 Scale(float x, float y, float z)
+        public static Mat4 Scale(Vec3 scale)
         {
-            return new Mat4
-            {
-                [0,0] = x,
-                [1,1] = y,
-                [2,2]= z,
-                [3,3] = 1f
-            };
+            return new Mat4(Mat3.Scale(scale));
+        }
+        
+        public static Mat4 Rotation(Vec3 rotationAxis, float angle)
+        {
+            return new Mat4(Mat3.Rotation(rotationAxis, angle));
         }
         
         public static Mat4 LookAt(Vec3 eye, Vec3 target, Vec3 upVector)
         {
             var f = (target - eye).Normalized;
-            var s = Vec3.Cross(f, upVector.Normalized);
-            var u = Vec3.Cross(s.Normalized, f);
-            
+            var s = f.Cross(upVector.Normalized).Normalized;
+            var u = s.Cross(f).Normalized;
+
             return new Mat4(
                  s.X,  s.Y,  s.Z, 0,
                  u.X,  u.Y,  u.Z, 0, 
-                -f.X, -f.Y, -f.Z, 0, 
-                0,0,0,1) * Translate(-eye.X, -eye.Y, -eye.Z);
+                -f.X, -f.Y, -f.Z, 0,
+                 0, 0, 0, 1) * Translation(-eye);
         }
         
         public static Mat4 operator *(Mat4 first, Mat4 second) 
         { 
             return new Mat4
             {
-                [0,0] = (first[0,0] * second[0,0] + first[1,0] * second[0,1] + first[2,0] * second[0,2] + first[3,0] * second[0,3]),
-                [0,1] = (first[0,1] * second[0,0] + first[1,1] * second[0,1] + first[2,1] * second[0,2] + first[3,1] * second[0,3]),
-                [0,2] = (first[0,2] * second[0,0] + first[1,2] * second[0,1] + first[2,2] * second[0,2] + first[3,2] * second[0,3]),
-                [0,3] = (first[0,3] * second[0,0] + first[1,3] * second[0,1] + first[2,3] * second[0,2] + first[3,3] * second[0,3]),
-                [1,0] = (first[0,0] * second[1,0] + first[1,0] * second[1,1] + first[2,0] * second[1,2] + first[3,0] * second[1,3]),
-                [1,1] = (first[0,1] * second[1,0] + first[1,1] * second[1,1] + first[2,1] * second[1,2] + first[3,1] * second[1,3]),
-                [1,2] = (first[0,2] * second[1,0] + first[1,2] * second[1,1] + first[2,2] * second[1,2] + first[3,2] * second[1,3]),
-                [1,3] = (first[0,3] * second[1,0] + first[1,3] * second[1,1] + first[2,3] * second[1,2] + first[3,3] * second[1,3]),
-                [2,0] = (first[0,0] * second[2,0] + first[1,0] * second[2,1] + first[2,0] * second[2,2] + first[3,0] * second[2,3]),
-                [2,1] = (first[0,1] * second[2,0] + first[1,1] * second[2,1] + first[2,1] * second[2,2] + first[3,1] * second[2,3]),
-                [2,2] = (first[0,2] * second[2,0] + first[1,2] * second[2,1] + first[2,2] * second[2,2] + first[3,2] * second[2,3]), 
-                [2,3] = (first[0,3] * second[2,0] + first[1,3] * second[2,1] + first[2,3] * second[2,2] + first[3,3] * second[2,3]),
-                [3,0] = (first[0,0] * second[3,0] + first[1,0] * second[3,1] + first[2,0] * second[3,2] + first[3,0] * second[3,3]),
-                [3,1] = (first[0,1] * second[3,0] + first[1,1] * second[3,1] + first[2,1] * second[3,2] + first[3,1] * second[3,3]),
-                [3,2] = (first[0,2] * second[3,0] + first[1,2] * second[3,1] + first[2,2] * second[3,2] + first[3,2] * second[3,3]),
-                [3,3] = (first[0,3] * second[3,0] + first[1,3] * second[3,1] + first[2,3] * second[3,2] + first[3,3] * second[3,3]),
+                [0,0] = (first[0,0] * second[0,0] + first[0,1] * second[1,0] + first[0,2] * second[2,0] + first[0,3] * second[3,0]),
+                [1,0] = (first[1,0] * second[0,0] + first[1,1] * second[1,0] + first[1,2] * second[2,0] + first[1,3] * second[3,0]),
+                [2,0] = (first[2,0] * second[0,0] + first[2,1] * second[1,0] + first[2,2] * second[2,0] + first[2,3] * second[3,0]),
+                [3,0] = (first[3,0] * second[0,0] + first[3,1] * second[1,0] + first[3,2] * second[2,0] + first[3,3] * second[3,0]),
+                [0,1] = (first[0,0] * second[0,1] + first[0,1] * second[1,1] + first[0,2] * second[2,1] + first[0,3] * second[3,1]),
+                [1,1] = (first[1,0] * second[0,1] + first[1,1] * second[1,1] + first[1,2] * second[2,1] + first[1,3] * second[3,1]),
+                [2,1] = (first[2,0] * second[0,1] + first[2,1] * second[1,1] + first[2,2] * second[2,1] + first[2,3] * second[3,1]),
+                [3,1] = (first[3,0] * second[0,1] + first[3,1] * second[1,1] + first[3,2] * second[2,1] + first[3,3] * second[3,1]),
+                [0,2] = (first[0,0] * second[0,2] + first[0,1] * second[1,2] + first[0,2] * second[2,2] + first[0,3] * second[3,2]),
+                [1,2] = (first[1,0] * second[0,2] + first[1,1] * second[1,2] + first[1,2] * second[2,2] + first[1,3] * second[3,2]),
+                [2,2] = (first[2,0] * second[0,2] + first[2,1] * second[1,2] + first[2,2] * second[2,2] + first[2,3] * second[3,2]), 
+                [3,2] = (first[3,0] * second[0,2] + first[3,1] * second[1,2] + first[3,2] * second[2,2] + first[3,3] * second[3,2]),
+                [0,3] = (first[0,0] * second[0,3] + first[0,1] * second[1,3] + first[0,2] * second[2,3] + first[0,3] * second[3,3]),
+                [1,3] = (first[1,0] * second[0,3] + first[1,1] * second[1,3] + first[1,2] * second[2,3] + first[1,3] * second[3,3]),
+                [2,3] = (first[2,0] * second[0,3] + first[2,1] * second[1,3] + first[2,2] * second[2,3] + first[2,3] * second[3,3]),
+                [3,3] = (first[3,0] * second[0,3] + first[3,1] * second[1,3] + first[3,2] * second[2,3] + first[3,3] * second[3,3]),
             };
         }
-
-        public static Mat4 Inverse(Mat4 matrix)
+        
+        public Mat4 Transpose =>
+            new Mat4(
+                this[0, 0], this[1, 0], this[2, 0], this[3, 0],
+                this[0, 1], this[1, 1], this[2, 1], this[3, 1],
+                this[0, 2], this[1, 2], this[2, 2], this[3, 2],
+                this[0, 3], this[1, 3], this[2, 3], this[3, 3]);
+        
+        public Mat4 Inverse
         {
-            var a2323 = matrix.x22 * matrix.x33 - matrix.x23 * matrix.x32 ;
-            var a1323 = matrix.x21 * matrix.x33 - matrix.x23 * matrix.x31 ;
-            var a1223 = matrix.x21 * matrix.x32 - matrix.x22 * matrix.x31 ;
-            var a0323 = matrix.x20 * matrix.x33 - matrix.x23 * matrix.x30 ;
-            var a0223 = matrix.x20 * matrix.x32 - matrix.x22 * matrix.x30 ;
-            var a0123 = matrix.x20 * matrix.x31 - matrix.x21 * matrix.x30 ;
-            var a2313 = matrix.x12 * matrix.x33 - matrix.x13 * matrix.x32 ;
-            var a1313 = matrix.x11 * matrix.x33 - matrix.x13 * matrix.x31 ;
-            var a1213 = matrix.x11 * matrix.x32 - matrix.x12 * matrix.x31 ;
-            var a2312 = matrix.x12 * matrix.x23 - matrix.x13 * matrix.x22 ;
-            var a1312 = matrix.x11 * matrix.x23 - matrix.x13 * matrix.x21 ;
-            var a1212 = matrix.x11 * matrix.x22 - matrix.x12 * matrix.x21 ;
-            var a0313 = matrix.x10 * matrix.x33 - matrix.x13 * matrix.x30 ;
-            var a0213 = matrix.x10 * matrix.x32 - matrix.x12 * matrix.x30 ;
-            var a0312 = matrix.x10 * matrix.x23 - matrix.x13 * matrix.x20 ;
-            var a0212 = matrix.x10 * matrix.x22 - matrix.x12 * matrix.x20 ;
-            var a0113 = matrix.x10 * matrix.x31 - matrix.x11 * matrix.x30 ;
-            var a0112 = matrix.x10 * matrix.x21 - matrix.x11 * matrix.x20 ;
-
-            var det = matrix.x00 * ( matrix.x11 * a2323 - matrix.x12 * a1323 + matrix.x13 * a1223 ) 
-                - matrix.x01 * ( matrix.x10 * a2323 - matrix.x12 * a0323 + matrix.x13 * a0223 ) 
-                + matrix.x02 * ( matrix.x10 * a1323 - matrix.x11 * a0323 + matrix.x13 * a0123 ) 
-                - matrix.x03 * ( matrix.x10 * a1223 - matrix.x11 * a0223 + matrix.x12 * a0123 ) ;
-            det = 1 / det;
-
-            return new Mat4{
-                x00 = det *   ( matrix.x11 * a2323 - matrix.x12 * a1323 + matrix.x13 * a1223 ),
-                x01 = det * - ( matrix.x01 * a2323 - matrix.x02 * a1323 + matrix.x03 * a1223 ),
-                x02 = det *   ( matrix.x01 * a2313 - matrix.x02 * a1313 + matrix.x03 * a1213 ),
-                x03 = det * - ( matrix.x01 * a2312 - matrix.x02 * a1312 + matrix.x03 * a1212 ),
-                x10 = det * - ( matrix.x10 * a2323 - matrix.x12 * a0323 + matrix.x13 * a0223 ),
-                x11 = det *   ( matrix.x00 * a2323 - matrix.x02 * a0323 + matrix.x03 * a0223 ),
-                x12 = det * - ( matrix.x00 * a2313 - matrix.x02 * a0313 + matrix.x03 * a0213 ),
-                x13 = det *   ( matrix.x00 * a2312 - matrix.x02 * a0312 + matrix.x03 * a0212 ),
-                x20 = det *   ( matrix.x10 * a1323 - matrix.x11 * a0323 + matrix.x13 * a0123 ),
-                x21 = det * - ( matrix.x00 * a1323 - matrix.x01 * a0323 + matrix.x03 * a0123 ),
-                x22 = det *   ( matrix.x00 * a1313 - matrix.x01 * a0313 + matrix.x03 * a0113 ),
-                x23 = det * - ( matrix.x00 * a1312 - matrix.x01 * a0312 + matrix.x03 * a0112 ),
-                x30 = det * - ( matrix.x10 * a1223 - matrix.x11 * a0223 + matrix.x12 * a0123 ),
-                x31 = det *   ( matrix.x00 * a1223 - matrix.x01 * a0223 + matrix.x02 * a0123 ),
-                x32 = det * - ( matrix.x00 * a1213 - matrix.x01 * a0213 + matrix.x02 * a0113 ),
-                x33 = det *   ( matrix.x00 * a1212 - matrix.x01 * a0212 + matrix.x02 * a0112 )
-            };
+            get
+            {
+                 var num1  = this[1,1] * this[2,2] * this[3,3] - this[1,1] * this[3,2] * this[2,3] - this[1,2] * this[2,1] * this[3,3] + this[1,2] * this[3,1] * this[2,3] + this[1,3] * this[2,1] * this[3,2] - this[1,3] * this[3,1] * this[2,2];
+                 var num2  = -this[0,1] * this[2,2] * this[3,3] + this[0,1] * this[3,2] * this[2,3] + this[0,2] * this[2,1] * this[3,3] - this[0,2] * this[3,1] * this[2,3] - this[0,3] * this[2,1] * this[3,2] + this[0,3] * this[3,1] * this[2,2];
+                 var num3  = this[0,1] * this[1,2] * this[3,3] - this[0,1] * this[3,2] * this[1,3] - this[0,2] * this[1,1] * this[3,3] + this[0,2] * this[3,1] * this[1,3] + this[0,3] * this[1,1] * this[3,2] - this[0,3] * this[3,1] * this[1,2];
+                 var num4  = -this[0,1] * this[1,2] * this[2,3] + this[0,1] * this[2,2] * this[1,3] + this[0,2] * this[1,1] * this[2,3] - this[0,2] * this[2,1] * this[1,3] - this[0,3] * this[1,1] * this[2,2] + this[0,3] * this[2,1] * this[1,2];
+                 var num5  = -this[1,0] * this[2,2] * this[3,3] + this[1,0] * this[3,2] * this[2,3] + this[1,2] * this[2,0] * this[3,3] - this[1,2] * this[3,0] * this[2,3] - this[1,3] * this[2,0] * this[3,2] + this[1,3] * this[3,0] * this[2,2];
+                 var num6  = this[0,0] * this[2,2] * this[3,3] - this[0,0] * this[3,2] * this[2,3] - this[0,2] * this[2,0] * this[3,3] + this[0,2] * this[3,0] * this[2,3] + this[0,3] * this[2,0] * this[3,2] - this[0,3] * this[3,0] * this[2,2];
+                 var num7  = -this[0,0] * this[1,2] * this[3,3] + this[0,0] * this[3,2] * this[1,3] + this[0,2] * this[1,0] * this[3,3] - this[0,2] * this[3,0] * this[1,3] - this[0,3] * this[1,0] * this[3,2] + this[0,3] * this[3,0] * this[1,2];
+                 var num8  = this[0,0] * this[1,2] * this[2,3] - this[0,0] * this[2,2] * this[1,3] - this[0,2] * this[1,0] * this[2,3] + this[0,2] * this[2,0] * this[1,3] + this[0,3] * this[1,0] * this[2,2] - this[0,3] * this[2,0] * this[1,2];
+                 var num9  = this[1,0] * this[2,1] * this[3,3] - this[1,0] * this[3,1] * this[2,3] - this[1,1] * this[2,0] * this[3,3] + this[1,1] * this[3,0] * this[2,3] + this[1,3] * this[2,0] * this[3,1] - this[1,3] * this[3,0] * this[2,1];
+                 var num10 = -this[0,0] * this[2,1] * this[3,3] + this[0,0] * this[3,1] * this[2,3] + this[0,1] * this[2,0] * this[3,3] - this[0,1] * this[3,0] * this[2,3] - this[0,3] * this[2,0] * this[3,1] + this[0,3] * this[3,0] * this[2,1];
+                 var num11 = this[0,0] * this[1,1] * this[3,3] - this[0,0] * this[3,1] * this[1,3] - this[0,1] * this[1,0] * this[3,3] + this[0,1] * this[3,0] * this[1,3] + this[0,3] * this[1,0] * this[3,1] - this[0,3] * this[3,0] * this[1,1];
+                 var num12 = -this[0,0] * this[1,1] * this[2,3] + this[0,0] * this[2,1] * this[1,3] + this[0,1] * this[1,0] * this[2,3] - this[0,1] * this[2,0] * this[1,3] - this[0,3] * this[1,0] * this[2,1] + this[0,3] * this[2,0] * this[1,1];
+                 var num13 = -this[1,0] * this[2,1] * this[3,2] + this[1,0] * this[3,1] * this[2,2] + this[1,1] * this[2,0] * this[3,2] - this[1,1] * this[3,0] * this[2,2] - this[1,2] * this[2,0] * this[3,1] + this[1,2] * this[3,0] * this[2,1];
+                 var num14 = this[0,0] * this[2,1] * this[3,2] - this[0,0] * this[3,1] * this[2,2] - this[0,1] * this[2,0] * this[3,2] + this[0,1] * this[3,0] * this[2,2] + this[0,2] * this[2,0] * this[3,1] - this[0,2] * this[3,0] * this[2,1];
+                 var num15 = -this[0,0] * this[1,1] * this[3,2] + this[0,0] * this[3,1] * this[1,2] + this[0,1] * this[1,0] * this[3,2] - this[0,1] * this[3,0] * this[1,2] - this[0,2] * this[1,0] * this[3,1] + this[0,2] * this[3,0] * this[1,1];
+                 var num16 = this[0,0] * this[1,1] * this[2,2] - this[0,0] * this[2,1] * this[1,2] - this[0,1] * this[1,0] * this[2,2] + this[0,1] * this[2,0] * this[1,2] + this[0,2] * this[1,0] * this[2,1] - this[0,2] * this[2,0] * this[1,1];
+                 var det = this[0,0] * num1 + this[1,0] * num2 + this[2,0] * num3 + this[3,0] * num4;
+                 if (Math.Abs(det) < 9.99999997475243E-07) 
+                     throw new InvalidOperationException("Matrix not invertible");
+                 var idet = 1f / det; 
+                 return new Mat4(
+                     idet * num1, idet * num2, idet * num3, idet * num4, 
+                     idet * num5, idet * num6, idet * num7, idet * num8, 
+                     idet * num9, idet * num10, idet * num11, idet * num12, 
+                     idet * num13, idet * num14, idet * num15, idet * num16);
+            }
         }
 
-    public override string ToString()
+        public override string ToString()
         {
             return $"Matrix4:\n[{this[0,0]}, {this[0,1]}, {this[0,2]}, {this[0,3]}" +
                    $"\n {this[1,0]}, {this[1,1]}, {this[1,2]}, {this[1,3]}" +

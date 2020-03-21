@@ -32,6 +32,11 @@ namespace Breakout3D.Framework
         {
             m_Data = data;
         }
+        
+        public UniformBuffer()
+        {
+            m_Data = new T();
+        }
 
         public abstract uint Binding { get; }
 

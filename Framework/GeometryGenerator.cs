@@ -35,14 +35,26 @@ namespace Breakout3D.Framework
         
         public static Geometry Sphere()
         {
-            var sphereData = LoadFromSimpleObj("./Models/Sphere.obj");
+            var data = LoadFromSimpleObj("./Models/Sphere.obj");
             
-            for(var i = 0; i < sphereData.Vertices.Count; i += 3)
+            for(var i = 0; i < data.Vertices.Count; i += 3)
             {
-                var normal = new Vec3(sphereData.Vertices[i], sphereData.Vertices[i+1], sphereData.Vertices[i+2]);
-                sphereData.Normals.AddRange(new []{normal.Normalized.X, normal.Normalized.Y, normal.Normalized.Z});
+                var normal = new Vec3(data.Vertices[i], data.Vertices[i+1], data.Vertices[i+2]);
+                data.Normals.AddRange(new []{normal.Normalized.X, normal.Normalized.Y, normal.Normalized.Z});
             }
-            return Geometry.GenerateGeometry(sphereData);
+            return Geometry.GenerateGeometry(data);
+        }
+        
+        public static Geometry CircleFloor()
+        {
+            var data = LoadFromSimpleObj("./Models/CircleFloor.obj");
+            
+            for(var i = 0; i < data.Vertices.Count; i += 3)
+            {
+                data.Normals.AddRange(new []{0f, 1f, 0f});
+                data.TexCoords.AddRange(new []{data.Vertices[i] + 0.5f, data.Vertices[i+2] + 0.5f});
+            }
+            return Geometry.GenerateGeometry(data);
         }
 
         public static GeometryData LoadFromSimpleObj(string filename)
@@ -101,8 +113,8 @@ namespace Breakout3D.Framework
                             var v1t = v1Indices[0] - 1;
                             var v2t = v2Indices[0] - 1;
 
-                            texCoords.AddRange(new []{objTexCoords[v1t*3], objTexCoords[v1t*3 + 1], objTexCoords[v1t*3 + 2]}); 
-                            texCoords.AddRange(new []{objTexCoords[v2t*3], objTexCoords[v2t*3 + 1], objTexCoords[v2t*3 + 2]}); 
+                            texCoords.AddRange(new []{objTexCoords[v1t*2], objTexCoords[v1t*2 + 1]}); 
+                            texCoords.AddRange(new []{objTexCoords[v2t*2], objTexCoords[v2t*2 + 1]}); 
                         }
                     }
                 }

@@ -20,12 +20,11 @@ namespace Breakout3D.Framework
         public override uint Binding => Buffers.CAMERA_BINDING;
         
         public Camera() : base(new CameraData(Mat4.Identity, Mat4.Identity, Vec3.Zero)) {}
-
-        public void SetCamera(Mat4 projection, Mat4 view)
+        
+        public void LookAt(Vec3 eye, Vec3 target, Vec3 upVector)
         {
-            m_Data.Projection = projection;
-            m_Data.View = view;
-            m_Data.EyePosition = new Vec3(view.x30, view.x31, view.x32);
+            m_Data.View = Mat4.LookAt(eye, target, upVector);
+            m_Data.EyePosition = eye;
             UpdateData();
         }
         

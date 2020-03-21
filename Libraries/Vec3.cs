@@ -44,6 +44,11 @@ namespace Breakout3D.Libraries
             Z = x;
         }
         
+        public Vec3 Cross(Vec3 other)
+        {
+            return Cross(this, other);
+        }
+        
         public static Vec3 Cross(Vec3 first, Vec3 second)
         {
             return new Vec3(
@@ -51,17 +56,22 @@ namespace Breakout3D.Libraries
                 first.Z * second.X - first.X * second.Z,
                 first.X * second.Y - first.Y * second.X);
         }
+        
+        public float Dot(Vec3 other)
+        {
+            return Vec3.Dot(this, other);
+        }
+        
+        public static float Dot(Vec3 first, Vec3 second)
+        {
+            return first.X * second.X + first.Y * second.Y + first.Z * second.Z;
+        }
 
         public static Vec3 Normal(Vec3 v0, Vec3 v1, Vec3 v2)
         {
             var a = v1 - v0;
             var b = v2 - v0;
             return Cross(a, b).Normalized;
-        }
-
-        public static float Dot(Vec3 first, Vec3 second)
-        {
-            return first.X * second.X + first.Y * second.Y + first.Z * second.Z;
         }
 
         public static Vec3 operator +(Vec3 first, Vec3 second)
@@ -96,10 +106,9 @@ namespace Breakout3D.Libraries
         
         public static bool operator==(Vec3 first, Vec3 second)
         {
-            return first != null && second != null &&
-                Math.Abs(first.X - second.X) < Epsilon && 
-                Math.Abs(first.Y - second.Y) < Epsilon && 
-                Math.Abs(first.Z - second.Z) < Epsilon;
+            return Math.Abs(first.X - second.X) < Epsilon && 
+                   Math.Abs(first.Y - second.Y) < Epsilon && 
+                   Math.Abs(first.Z - second.Z) < Epsilon;
         }
         
         public static bool operator!=(Vec3 first, Vec3 second)
@@ -115,20 +124,16 @@ namespace Breakout3D.Libraries
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
             return Equals((Vec3) obj);
         }
 
         public override int GetHashCode()
         {
-            unchecked
-            {
-                var hashCode = X.GetHashCode();
-                hashCode = (hashCode * 397) ^ Y.GetHashCode();
-                hashCode = (hashCode * 397) ^ Z.GetHashCode();
-                return hashCode;
-            }
+            var hashCode = X.GetHashCode();
+            hashCode = (hashCode * 397) ^ Y.GetHashCode();
+            hashCode = (hashCode * 397) ^ Z.GetHashCode();
+            return hashCode;
         }
 
         public readonly float[] ToArray()
@@ -138,7 +143,7 @@ namespace Breakout3D.Libraries
         
         public override string ToString()
         {
-            return $"Vector3: ({X}, {Y}, {Z}";
+            return $"Vector3: [{X}, {Y}, {Z}]";
         }
     }
 }

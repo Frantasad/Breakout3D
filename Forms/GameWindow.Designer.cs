@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
+using Breakout3D.Framework;
 
 namespace Breakout3D
 {
@@ -49,7 +50,7 @@ namespace Breakout3D
             this.RenderControl.BackColor = System.Drawing.Color.DimGray;
             this.RenderControl.ColorBits = ((uint) (24u));
             this.RenderControl.DepthBits = ((uint) (16u));
-            this.RenderControl.MultisampleBits = ((uint) (0u));
+            this.RenderControl.MultisampleBits = ((uint) (8u));
             this.RenderControl.StencilBits = ((uint) (0u));
             this.RenderControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RenderControl.Location = new System.Drawing.Point(0, 0);
@@ -57,13 +58,11 @@ namespace Breakout3D
             this.RenderControl.Size = new System.Drawing.Size(853, 494);
             this.RenderControl.TabIndex = 0;
             this.RenderControl.ContextCreated += new System.EventHandler<OpenGL.GlControlEventArgs>(this.InitScene);
-            this.RenderControl.ContextDestroying +=
-                new System.EventHandler<OpenGL.GlControlEventArgs>(this.DestroyScene);
-            this.RenderControl.Render += new System.EventHandler<OpenGL.GlControlEventArgs>(this.RenderScene);
-            this.RenderControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.RenderControl_KeyDown);
-            this.RenderControl.KeyUp += new System.Windows.Forms.KeyEventHandler(this.RenderControl_KeyUp);
-            this.RenderControl.PreviewKeyDown +=
-                new System.Windows.Forms.PreviewKeyDownEventHandler(this.RenderControl_PreviewKeyDown);
+            this.RenderControl.Render += new System.EventHandler<OpenGL.GlControlEventArgs>(this.OnRepaint);
+            this.RenderControl.ContextDestroying += new System.EventHandler<OpenGL.GlControlEventArgs>(this.DestroyScene);
+            this.RenderControl.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(Input.PreviewKeyDown);
+            this.RenderControl.KeyDown += new System.Windows.Forms.KeyEventHandler(Input.KeyDown);
+            this.RenderControl.KeyUp += new System.Windows.Forms.KeyEventHandler(Input.KeyUp);
             // 
             // StatusStrip
             // 
@@ -116,7 +115,7 @@ namespace Breakout3D
             this.Controls.Add(this.RenderControl);
             this.Name = "GameWindow";
             this.Text = "Breakout 3D";
-            this.Resize += new System.EventHandler(this.GameWindow_Resize);
+            this.Resize += new System.EventHandler(this.OnResize);
             this.StatusStrip.ResumeLayout(false);
             this.StatusStrip.PerformLayout();
             this.ResumeLayout(false);

@@ -4,6 +4,7 @@ in VertexData
 {
     vec3 position_ws;
     vec3 normal_ws;
+    vec2 tex_coord;
 } inData;
 
 layout (std140, binding = 0) uniform CameraData
@@ -30,8 +31,11 @@ layout (std140, binding = 3) uniform SunLight
 	vec3 specular;
 } sun;
 
+layout (binding = 0) uniform sampler2D object_tex;
 
 void main() {
+    vec3 tex_color = texture(object_tex, inData.tex_coord).rgb;
+
 	vec3 N = normalize(inData.normal_ws);
 	vec3 Eye = normalize(camera.eye_position - inData.position_ws);
     vec3 L = normalize(sun.position);
@@ -44,7 +48,7 @@ void main() {
     vec3 dif = Idif * sun.diffuse;
     vec3 spe = Ispe * sun.specular;
 
-	vec3 final_color = material.ambient * amb + material.diffuse * dif + material.specular * spe;
+	vec3 final_color = tex_color * amb + tex_color * dif + material.specular * spe;
 
     gl_FragColor = vec4(final_color, 1.0);
 }

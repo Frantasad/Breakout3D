@@ -14,7 +14,8 @@ namespace Breakout3D
         private readonly Light m_SunLight = new Light();
 
         private readonly Material m_DefaultMaterial = new Material();
-        private readonly Texture m_DefaultTexture = new Texture();
+        private readonly Material m_ChromeMaterial = new Material();
+        private readonly Texture m_FloorTexture = new Texture();
 
         private Geometry m_Sphere;
         private readonly Transform m_SphereTransform = new Transform();
@@ -45,9 +46,11 @@ namespace Breakout3D
 
             // Init materials
             m_DefaultMaterial.Init();
-            m_DefaultMaterial.Data = new PhongMaterial(new Vec3(0.6f, 0, 0), true, 200.0f, 1.0f);
+            m_DefaultMaterial.Set(new Vec3(0.6f, 0, 0), true, 200.0f, 1.0f);
+            m_ChromeMaterial.Init();
+            m_ChromeMaterial.Set(new Vec3(0f), new Vec3(0.55f), new Vec3(0.7f), 32f, 1.0f);
             
-            m_DefaultTexture.Load("./Textures/wood.png");
+            m_FloorTexture.Load("./Textures/wood.png");
 
             // Init Light
             m_SunLight.Init();
@@ -57,16 +60,16 @@ namespace Breakout3D
             Gl.Viewport(0, 0, Width, Height);
             m_Camera.Init();
             m_Camera.SetProjection(Mat4.Perspective(45.0f, Width/(float)Height, 0.1f, 1000.0f));
-            m_Camera.LookAt(new Vec3(0, 3, 3f), new Vec3(0, 0, 0), Vec3.Up);
+            m_Camera.LookAt(new Vec3(0, 100, 100f), new Vec3(0, 0, 0), Vec3.Up);
             
             // Init objects
             m_Sphere = GeometryGenerator.Sphere();
             m_SphereTransform.Init();
-            m_SphereTransform.Set(new Vec3(0, 1/10f, 0), Mat3.Identity, Vec3.Unit/5);
+            m_SphereTransform.Set(new Vec3(0, 1.5f, 0), Mat3.Identity, Vec3.Unit*3);
             
             m_Floor = GeometryGenerator.CircleFloor();
             m_FloorTransform.Init();
-            m_FloorTransform.Set(Vec3.Zero, Mat3.Identity, Vec3.Unit*3);
+            m_FloorTransform.Set(Vec3.Zero, Mat3.Identity, Vec3.Unit*100);
             
             // Init GL environment
             Gl.ClearColor(0.1f, 0.1f, 0.12f, 0.1f);
@@ -96,7 +99,7 @@ namespace Breakout3D
             // Draw Sphere
             m_LitProgram.Use();
             
-            m_DefaultMaterial.Bind();
+            m_ChromeMaterial.Bind();
             m_SphereTransform.Bind();
             m_Sphere.Bind();
             m_Sphere.Draw();
@@ -104,7 +107,7 @@ namespace Breakout3D
             // Draw Floor
             m_TextureProgram.Use();
             
-            m_DefaultTexture.Bind(TextureUnit.Texture0);
+            m_FloorTexture.Bind(TextureUnit.Texture0);
             m_DefaultMaterial.Bind();
             m_FloorTransform.Bind();
             m_Floor.Bind();

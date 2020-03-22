@@ -48,9 +48,9 @@ namespace Breakout3D
             this.RenderControl.Animation = true;
             this.RenderControl.AnimationTimer = false;
             this.RenderControl.BackColor = System.Drawing.Color.DimGray;
-            this.RenderControl.ColorBits = ((uint) (24u));
-            this.RenderControl.DepthBits = ((uint) (16u));
-            this.RenderControl.MultisampleBits = ((uint) (8u));
+            this.RenderControl.ColorBits = ((uint) (32u));
+            this.RenderControl.DepthBits = ((uint) (32u));
+            this.RenderControl.MultisampleBits = ((uint) (4u));
             this.RenderControl.StencilBits = ((uint) (0u));
             this.RenderControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RenderControl.Location = new System.Drawing.Point(0, 0);

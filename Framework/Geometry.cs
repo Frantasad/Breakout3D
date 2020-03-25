@@ -2,15 +2,16 @@
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Breakout3D.Libraries;
 using OpenGL;
 
 namespace Breakout3D.Framework
 {
-    public struct GeometryData
+    public class GeometryData
     {
-        public List<float> Vertices;
-        public List<float> TexCoords;
-        public List<float> Normals;
+        public List<Vec3> Vertices = new List<Vec3>();
+        public List<Vec3> Normals = new List<Vec3>();
+        public List<Vec2> TexCoords = new List<Vec2>();
     }
     
     public class Geometry : IDisposable
@@ -31,7 +32,7 @@ namespace Breakout3D.Framework
         {
             m_PrimitiveType = primitiveType;
         }
-        
+
         public void Bind()
         {
             Gl.BindVertexArray(VAO);
@@ -51,7 +52,22 @@ namespace Breakout3D.Framework
         public static Geometry GenerateGeometry(GeometryData geometryData,
             PrimitiveType primitiveType = PrimitiveType.Triangles)
         {
-            return GenerateGeometry(geometryData.Vertices.ToArray(), geometryData.Normals.ToArray(), geometryData.TexCoords.ToArray(), primitiveType);
+            var vertices = new List<float>();
+            foreach (var vertex in geometryData.Vertices)
+            {
+                vertices.AddRange(vertex.ToArray());
+            }
+            var normals = new List<float>();
+            foreach (var normal in geometryData.Normals)
+            {
+                normals.AddRange(normal.ToArray());
+            }
+            var texCoords = new List<float>();
+            foreach (var texCoord in geometryData.TexCoords)
+            {
+                texCoords.AddRange(texCoord.ToArray());
+            }
+            return GenerateGeometry(vertices.ToArray(), normals.ToArray(), texCoords.ToArray(), primitiveType);
         }
 
         public static Geometry GenerateGeometry(float[] vertices, float[] normals, float[] texCoords, PrimitiveType primitiveType = PrimitiveType.Triangles)

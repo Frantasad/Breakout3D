@@ -15,6 +15,11 @@ namespace Breakout3D.Framework
             Model = Mat4.Translation(position) * new Mat4(rotation) * Mat4.Scale(scale);
             InverseTransposeModel = new Mat3(Model).Transpose.Inverse;
         }
+        public TransformData(Mat4 model)
+        {
+            Model = model;
+            InverseTransposeModel = new Mat3(model).Transpose.Inverse;
+        }
     }
 
     public class Transform : UniformBuffer<TransformData>
@@ -82,6 +87,13 @@ namespace Breakout3D.Framework
         public void Rotate(Vec3 rotationAxis, float angle)
         {
             Rotation = Mat3.Rotation(rotationAxis, angle) * Rotation;
+        }
+        
+        public void RotateAround(Vec3 rotationAxis, float angle, Vec3 point)
+        {
+            m_Data = new TransformData(
+                Mat4.Translation(point) * Mat4.Rotation(rotationAxis, angle) * Mat4.Translation(-point) * m_Data.Model);
+            UpdateData();
         }
 
         private void RecalculateData()

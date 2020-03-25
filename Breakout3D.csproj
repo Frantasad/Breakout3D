@@ -22,12 +22,6 @@
       <None Update="Shaders\lit_vertex.glsl">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
-      <None Update="Models\CircleFloor.obj">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
-      <None Update="Models\Cube.obj">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
       <None Update="Models\Sphere.obj">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
@@ -41,6 +35,9 @@
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
       <None Update="Textures\wood.png">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="Textures\floor.png">
         <CopyToOutputDirectory>Always</CopyToOutputDirectory>
       </None>
     </ItemGroup>

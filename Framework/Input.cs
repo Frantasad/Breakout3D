@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 
 namespace Breakout3D.Framework
@@ -14,36 +15,19 @@ namespace Breakout3D.Framework
         };
         
         public static float XAxis { get; private set; }
-        public static float YAxis { get; private set; }
 
         public static bool IsKeyPressed(Keys key)
         {
             return PressedKeys.TryGetValue(key, out var pressed) && pressed;
         }
-        
+
+        private static float m_XVelocity;
         public static void HandleInput()
         {
-            XAxis = 0;
-            if (PressedKeys[Keys.Left])
-            {
-                XAxis = -1;
-            }
-
-            if (PressedKeys[Keys.Right])
-            {
-                XAxis = 1;
-            } 
-            
-            YAxis = 0;
-            if (PressedKeys[Keys.Down])
-            {
-                YAxis = -1;
-            }
-
-            if (PressedKeys[Keys.Up])
-            {
-                YAxis = 1;
-            } 
+            var tmpXAxis = 0;
+            if (PressedKeys[Keys.Left]) tmpXAxis -= 1;
+            if (PressedKeys[Keys.Right]) tmpXAxis += 1;
+            XAxis = MathUtils.SmoothDamp(XAxis, tmpXAxis, ref m_XVelocity, 100f, Time.DeltaTime);
         }
         
         public static void PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)

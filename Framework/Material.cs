@@ -29,6 +29,16 @@ namespace Breakout3D.Framework
         
         public Material(): base(new PhongMaterial(Vec3.Unit, Vec3.Unit, Vec3.Unit, 0.0f, 1.0f)){}
 
+        public Material(Vec3 ambient, Vec3 diffuse, Vec3 specular, float shininess, float alpha)
+        {
+            Set(ambient, diffuse, specular, shininess, alpha);
+        }
+        
+        public Material(Vec3 color, bool whiteSpecular, float shininess, float alpha)
+        {
+            Set(color, whiteSpecular, shininess, alpha);
+        }
+        
         public void Set(Vec3 ambient, Vec3 diffuse, Vec3 specular, float shininess, float alpha)
         {
             m_Data = new PhongMaterial(ambient, diffuse, specular, shininess, alpha);

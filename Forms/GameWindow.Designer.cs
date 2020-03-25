@@ -49,20 +49,21 @@ namespace Breakout3D
             this.RenderControl.AnimationTimer = false;
             this.RenderControl.BackColor = System.Drawing.Color.DimGray;
             this.RenderControl.ColorBits = ((uint) (32u));
-            this.RenderControl.DepthBits = ((uint) (32u));
-            this.RenderControl.MultisampleBits = ((uint) (4u));
-            this.RenderControl.StencilBits = ((uint) (0u));
+            this.RenderControl.DepthBits = ((uint) (24u));
             this.RenderControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RenderControl.Location = new System.Drawing.Point(0, 0);
+            this.RenderControl.MultisampleBits = ((uint) (4u));
             this.RenderControl.Name = "RenderControl";
-            this.RenderControl.Size = new System.Drawing.Size(853, 494);
+            this.RenderControl.Size = new System.Drawing.Size(1193, 698);
+            this.RenderControl.StencilBits = ((uint) (0u));
             this.RenderControl.TabIndex = 0;
-            this.RenderControl.ContextCreated += new System.EventHandler<OpenGL.GlControlEventArgs>(this.InitScene);
-            this.RenderControl.Render += new System.EventHandler<OpenGL.GlControlEventArgs>(this.OnRepaint);
-            this.RenderControl.ContextDestroying += new System.EventHandler<OpenGL.GlControlEventArgs>(this.DestroyScene);
-            this.RenderControl.PreviewKeyDown += new System.Windows.Forms.PreviewKeyDownEventHandler(Input.PreviewKeyDown);
-            this.RenderControl.KeyDown += new System.Windows.Forms.KeyEventHandler(Input.KeyDown);
-            this.RenderControl.KeyUp += new System.Windows.Forms.KeyEventHandler(Input.KeyUp);
+            this.RenderControl.ContextCreated += new System.EventHandler<OpenGL.GlControlEventArgs>(this.OnContextCreated);
+            this.RenderControl.ContextDestroying += new System.EventHandler<OpenGL.GlControlEventArgs>(this.OnContextDestroying);
+            this.RenderControl.Render += new System.EventHandler<OpenGL.GlControlEventArgs>(this.OnRender);
+            this.RenderControl.KeyDown += new System.Windows.Forms.KeyEventHandler(this.OnKeyDown);
+            this.RenderControl.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnKeyUp);
+            this.RenderControl.PreviewKeyDown +=
+                new System.Windows.Forms.PreviewKeyDownEventHandler(this.OnPreviewKeyDown);
             // 
             // StatusStrip
             // 
@@ -70,47 +71,47 @@ namespace Breakout3D
             {
                 this.Label_Status, this.StatusText, this.FlexibleSpace, this.UpdateTimeLabel, this.UpdateTimeValue
             });
-            this.StatusStrip.Location = new System.Drawing.Point(0, 465);
+            this.StatusStrip.Location = new System.Drawing.Point(0, 660);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(853, 29);
+            this.StatusStrip.Size = new System.Drawing.Size(1193, 38);
             this.StatusStrip.TabIndex = 0;
             // 
             // Label_Status
             // 
             this.Label_Status.Name = "Label_Status";
-            this.Label_Status.Size = new System.Drawing.Size(45, 24);
+            this.Label_Status.Size = new System.Drawing.Size(45, 33);
             this.Label_Status.Text = "Status: ";
             // 
             // StatusText
             // 
             this.StatusText.Name = "StatusText";
-            this.StatusText.Size = new System.Drawing.Size(12, 24);
+            this.StatusText.Size = new System.Drawing.Size(12, 33);
             this.StatusText.Text = "-";
             // 
             // FlexibleSpace
             // 
             this.FlexibleSpace.Name = "FlexibleSpace";
-            this.FlexibleSpace.Size = new System.Drawing.Size(622, 24);
+            this.FlexibleSpace.Size = new System.Drawing.Size(993, 33);
             this.FlexibleSpace.Spring = true;
             // 
             // UpdateTimeLabel
             // 
             this.UpdateTimeLabel.Name = "UpdateTimeLabel";
-            this.UpdateTimeLabel.Size = new System.Drawing.Size(78, 24);
+            this.UpdateTimeLabel.Size = new System.Drawing.Size(78, 33);
             this.UpdateTimeLabel.Text = "Update time: ";
             // 
             // UpdateTimeValue
             // 
             this.UpdateTimeValue.AutoSize = false;
             this.UpdateTimeValue.Name = "UpdateTimeValue";
-            this.UpdateTimeValue.Size = new System.Drawing.Size(50, 24);
+            this.UpdateTimeValue.Size = new System.Drawing.Size(50, 33);
             this.UpdateTimeValue.Text = "-";
             // 
             // GameWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(853, 494);
+            this.ClientSize = new System.Drawing.Size(1193, 698);
             this.Controls.Add(this.StatusStrip);
             this.Controls.Add(this.RenderControl);
             this.Name = "GameWindow";

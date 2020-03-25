@@ -73,12 +73,14 @@ namespace Breakout3D.Libraries
             this.x10 = x10; this.x11 = x11; this.x12 = x12;
             this.x20 = x20; this.x21 = x21; this.x22 = x22;
             pad1 = pad2 = pad3 = 0;
+            //pad1 = pad2 = pad3 = 0;
         }
 
         public Mat3(float value)
         {
             x00 = x01 = x02 = x10 = x11 = x12 = x20 = x21 = x22 = value;
             pad1 = pad2 = pad3 = 0;
+            //pad1 = pad2 = pad3 = 0;
         }
         
         public Mat3(Mat4 matrix)
@@ -86,7 +88,8 @@ namespace Breakout3D.Libraries
             x00 = matrix.x00; x01 = matrix.x01; x02 = matrix.x02;
             x10 = matrix.x10; x11 = matrix.x11; x12 = matrix.x12;
             x20 = matrix.x20; x21 = matrix.x21; x22 = matrix.x22;
-            pad1 = pad2 = pad3 = 0;
+            pad3 = pad2 = pad1 = 0;
+            //pad1 = pad2 = pad3 = 0;
         }
         
         public Vec3 GetRow(int row)

@@ -25,10 +25,19 @@ namespace Breakout3D.Framework
         
         public Light(): base(new LightData(
             new Vec3(0, 10, 0f), 
-            new Vec3(0.1f, 0.1f, 0.1f),
+            new Vec3(0.3f, 0.3f, 0.3f),
             new Vec3(0.7f, 0.7f, 0.7f),
             new Vec3(0.7f, 0.7f, 0.7f))){}
         
+        public Light(Vec3 position, Vec3 ambient, Vec3 diffuse, Vec3 specular): base(new LightData(
+            position, ambient, diffuse, specular)){}
+
+        public void Set(Vec3 position, Vec3 ambient, Vec3 diffuse, Vec3 specular)
+        {
+            m_Data = new LightData(position, ambient, diffuse, specular);
+            UpdateData();
+        }
+
         public Vec3 Position
         {
             get => m_Data.Position;

@@ -78,6 +78,11 @@ namespace Breakout3D.Libraries
         {
             return new Vec3(first.X + second.X, first.Y + second.Y, first.Z + second.Z);
         }
+        
+        public static Vec3 operator %(Vec3 first, float scalar)
+        {
+            return new Vec3(first.X % scalar, first.Y % scalar, first.Z % scalar);
+        }
 
         public static Vec3 operator -(Vec3 first, Vec3 second)
         {

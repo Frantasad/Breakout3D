@@ -10,16 +10,15 @@ namespace Breakout3D
     public partial class GameWindow : Form
     {
         private Game m_Game;
-        
+
         public GameWindow()
         {
             InitializeComponent();
-            m_Game = new Game(this);
         }
         
         private void OnContextCreated(object sender, GlControlEventArgs e)
         {
-            m_Game.InitScene();
+            m_Game = new Game(this);
         }
         
         private void OnRender(object sender, GlControlEventArgs e)
@@ -54,6 +53,16 @@ namespace Breakout3D
         private void OnPreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
         {
             Input.PreviewKeyDown(sender, e);
+        }
+        
+        public void UpdateScore(int value)
+        {
+            ScoreValue.Text = $"{value}";
+        }
+        
+        public void UpdateLives(int value)
+        {
+            LivesValue.Text = $"{value}";
         }
     }
 }

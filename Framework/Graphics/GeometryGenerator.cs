@@ -30,8 +30,8 @@ namespace Breakout3D.Framework
             var data = new GeometryData();
             for (var i = 0; i <= segmentCount; i++)
             {
-                var pointA = Mat3.Rotation(Vec3.Up, segmentAngle*i) * firstPoint;
-                var pointB = Mat3.Rotation(Vec3.Up, segmentAngle*(i+1)) * firstPoint;
+                var pointA = Mat3.Rotation(Vec3.Up * segmentAngle*i) * firstPoint;
+                var pointB = Mat3.Rotation(Vec3.Up * segmentAngle*(i+1)) * firstPoint;
                 
                 data.Vertices.Add(center);
                 data.TexCoords.Add(new Vec2(center.X + 1f, center.Z + 1f)*0.5f);
@@ -47,8 +47,8 @@ namespace Breakout3D.Framework
         public static Geometry Brick()
         {
             var points = new []{new Vec3(0, 0, 12), new Vec3(0, 0, 15), new Vec3(0, 4, 15), new Vec3(0, 4, 12)};
-            var rPoints = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up, 15) * vertex);
-            var lPoints = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up, -15) * vertex);
+            var rPoints = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up * -15) * vertex);
+            var lPoints = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up * 15) * vertex);
             var data = new GeometryData();
             
             GenerateQuad(rPoints, ref data.Vertices, ref data.Normals); // Right face
@@ -68,14 +68,14 @@ namespace Breakout3D.Framework
         public static Geometry Bat(int segmentCount = 6, float angleSize = 30)
         {
             var points = new []{new Vec3(0, 0, 43), new Vec3(0, 0, 46), new Vec3(0, 3, 46), new Vec3(0, 3, 43)};
-            points = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up, -angleSize/2) * vertex);
+            points = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up * angleSize/2) * vertex);
             var data = new GeometryData();
 
             var segmentAngle = angleSize / segmentCount;
             for (var i = 0; i < segmentCount; i++)
             {
-                var rPoints = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up, segmentAngle * (i+1)) * vertex);
-                var lPoints = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up, segmentAngle * i) * vertex);
+                var rPoints = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up * segmentAngle * i) * vertex);
+                var lPoints = Array.ConvertAll(points, vertex => Mat3.Rotation(Vec3.Up * segmentAngle * (i+1)) * vertex);
                 GenerateQuad(new []{rPoints[3], rPoints[2], lPoints[2], lPoints[3]}, ref data.Vertices, ref data.Normals); // Top face
                 GenerateQuad(new []{lPoints[0], lPoints[1], rPoints[1], rPoints[0]}, ref data.Vertices, ref data.Normals); // Bottom face
                 var tmp = new List<Vec3>();
@@ -88,8 +88,8 @@ namespace Breakout3D.Framework
                 normR = rPoints[0].Normalized;
                 normL = lPoints[0].Normalized;
                 data.Normals.Add(normL, normL, normR, normL, normR, normR);
-                if (i == segmentCount - 1) GenerateQuad(rPoints, ref data.Vertices, ref data.Normals); // Right face
-                if (i == 0) GenerateQuad(lPoints.Reverse().ToArray(), ref data.Vertices, ref data.Normals); // Left face
+                if (i == 0) GenerateQuad(rPoints, ref data.Vertices, ref data.Normals); // Right face
+                if (i == segmentCount - 1) GenerateQuad(lPoints.Reverse().ToArray(), ref data.Vertices, ref data.Normals); // Left face
             }
             
             for (var i = 0; i < data.Vertices.Count; i++)

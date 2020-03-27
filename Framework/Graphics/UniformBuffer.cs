@@ -15,6 +15,8 @@ namespace Breakout3D.Framework
     
     public abstract class UniformBuffer<T> : IDisposable where T : struct
     {
+        public abstract uint Binding { get; }
+        
         protected T m_Data;
         public T Data
         {
@@ -31,16 +33,11 @@ namespace Breakout3D.Framework
         public UniformBuffer(T data)
         {
             m_Data = data;
+            Init();
         }
+        public UniformBuffer() : this(new T()){}
         
-        public UniformBuffer()
-        {
-            m_Data = new T();
-        }
-
-        public abstract uint Binding { get; }
-
-        public void Init()
+        private void Init()
         {
             if(BufferId > 0) Dispose();
             

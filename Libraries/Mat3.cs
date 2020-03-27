@@ -101,25 +101,51 @@ namespace Breakout3D.Libraries
         {
             return new Vec3(this[0, col], this[1, col], this[2, col]);
         }
-        
-        public static Mat3 Rotation(Vec3 rotationAxis, float angle)
-        {
-            var radAngle = MathHelper.ToRadians(angle);
-            rotationAxis = rotationAxis.Normalized;
 
-            var c = (float) Math.Cos(radAngle);
-            var s = (float) Math.Sin(radAngle);
-            var t = 1 - c;
-            var x = rotationAxis.X;
-            var y = rotationAxis.Y;
-            var z = rotationAxis.Z;
-            
-            return new Mat3(
-                t*x*x+c,   t*x*y-z*s, t*x*z + y*s,
-                t*x*y+z*s, t*y*y+c,   t*y*z-x*s,
-                t*x*z-y*s, t*y*z+x*s, t*z*z + c );
+        public static Mat3 Rotation(Vec3 eulerAngles)
+        {
+            var radians = new Vec3(
+                MathUtils.ToRadians(eulerAngles.X), 
+                MathUtils.ToRadians(eulerAngles.Y), 
+                MathUtils.ToRadians(eulerAngles.Z));
+            var cosY = (float) Math.Cos(radians.Y);
+            var sinY = (float) Math.Sin(radians.Y);
+            var cosP = (float) Math.Cos(radians.X);
+            var sinP = (float) Math.Sin(radians.X);
+            var cosR = (float) Math.Cos(radians.Z);
+            var sinR = (float) Math.Sin(radians.Z);
+
+            return new Mat3
+            {
+                x00 = cosY * cosR + sinY * sinP * sinR,
+                x01 = cosP * sinR,
+                x02 = sinR * cosY * sinP - sinY * cosR,
+                x10 = cosR * sinY * sinP - sinR * cosY,
+                x11 = cosR * cosP,
+                x12 = sinY * sinR + cosR * cosY * sinP,
+                x20 = cosP * sinY,
+                x21 = -sinP,
+                x22 = cosP * cosY
+            };
         }
         
+        public static Vec3 EulerAngles(Mat3 matrix)
+        {
+            float x, y, z;
+            x = (float) Math.Asin(-matrix[2, 1]);
+            if (Math.Cos(x) > 0.0001) 
+            {
+                y = (float) Math.Atan2(matrix[2,0], matrix[2,2]);
+                z = (float) Math.Atan2(matrix[0,1], matrix[1,1]);
+            }
+            else
+            {
+                y = 0.0f; 
+                z = (float) Math.Atan2(-matrix[1,0], matrix[0,0]);
+            }
+            return new Vec3(MathUtils.ToDegrees(x), MathUtils.ToDegrees(y), MathUtils.ToDegrees(z));
+        }
+
         public static Mat3 Scale(Vec3 scale)
         {
             return new Mat3(scale);

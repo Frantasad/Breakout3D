@@ -11,7 +11,7 @@ namespace Breakout3D.Framework
     {
         public uint TextureId { get; private set; }
         
-        public void Load(string filename)
+        public Texture(string filename)
         {
             if (!File.Exists(filename))
             {

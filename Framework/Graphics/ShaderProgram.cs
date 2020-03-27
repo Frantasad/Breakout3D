@@ -12,7 +12,7 @@ namespace Breakout3D.Framework
         
         public int LocationPosition;
 
-        public void Init()
+        public ShaderProgram()
         {
             ProgramId = Gl.CreateProgram();
         }

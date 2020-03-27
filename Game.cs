@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Breakout3D.Framework;
 using Breakout3D.Libraries;
 using OpenGL;
@@ -8,121 +9,125 @@ namespace Breakout3D
 {
     public class Game : IDisposable
     {
-        private GameWindow m_Window;
+        private  GameWindow m_Window;
         
-        private readonly ShaderProgram m_LitProgram = new ShaderProgram();
-        private readonly ShaderProgram m_TextureProgram = new ShaderProgram();
-        private readonly Camera m_Camera = new Camera();
-        private readonly Light m_SunLight = new Light();
+        private readonly Camera m_Camera;
+        private readonly Light m_SunLight;
+        
+        private int m_Score;
+        public int Score
+        {
+            get => m_Score;
+            set
+            { 
+                m_Score = value;
+                m_Window.UpdateScore(value);
+            }
+        }
+        
+        private int m_Lives;
+        public int Lives
+        {
+            get => m_Lives;
+            set
+            { 
+                m_Lives = value;
+                m_Window.UpdateLives(value);
+            }
+        }
 
-        private readonly Material m_DefaultMaterial = new Material();
-        private readonly Material m_BatMaterial = new Material();
-        private readonly Material m_ChromeMaterial = new Material();
-        private readonly List<Material> m_BrickMaterials = new List<Material>();
-        
-        private readonly Texture m_FloorTexture = new Texture();
-
-        private readonly Transform m_SphereTransform = new Transform();
-        private readonly Transform m_FloorTransform = new Transform();
-        private readonly List<Transform> m_BrickTransforms = new List<Transform>();
-        private readonly List<Transform> m_BatTransforms = new List<Transform>{new Transform(), new Transform(), new Transform()};
-        
-        private Geometry m_SphereGeometry = new Geometry();
-        private Geometry m_BrickGeometry = new Geometry();
-        private Geometry m_FloorGeometry = new Geometry();
-        private Geometry m_BatGeometry = new Geometry();
+        private GameObject m_Ball;
+        private GameObject m_Floor;
+        private List<GameObject> m_Bricks;
+        private List<GameObject> m_Bats;
 
         public Game(GameWindow window)
         {
             m_Window = window;
-        }
-
-        // Initialize whole scene
-        public void InitScene()
-        {
+            
             // Init shaders
-            m_LitProgram.Init();
-            m_LitProgram.AddShader(ShaderType.VertexShader, "./Shaders/lit_vertex.glsl");
-            m_LitProgram.AddShader(ShaderType.FragmentShader, "./Shaders/lit_fragment.glsl");
-            m_LitProgram.Link();
-            
-            m_TextureProgram.Init();
-            m_TextureProgram.AddShader(ShaderType.VertexShader, "./Shaders/texture_vertex.glsl");
-            m_TextureProgram.AddShader(ShaderType.FragmentShader, "./Shaders/texture_fragment.glsl");
-            m_TextureProgram.Link();
+            var litProgram = new ShaderProgram();
+            litProgram.AddShader(ShaderType.VertexShader, "./Shaders/lit_vertex.glsl");
+            litProgram.AddShader(ShaderType.FragmentShader, "./Shaders/lit_fragment.glsl");
+            litProgram.Link();
 
-            // Init materials
-            m_DefaultMaterial.Init();
-            m_DefaultMaterial.Set(new Vec3(0.8f, 0, 0), true, 200.0f, 1.0f);
-            m_ChromeMaterial.Init();
-            m_ChromeMaterial.Set(new Vec3(0f), new Vec3(0.55f), new Vec3(0.7f), 32f, 1.0f);
-            m_BatMaterial.Init();
-            m_BatMaterial.Set(Color.FromRGB(213,8,24), false, 200f, 1.0f);
-            var blueMaterial = new Material(Color.FromRGB(54,88,229), true, 200.0f, 1.0f);
-            blueMaterial.Init();
-            var greenMaterial = new Material(Color.FromRGB(52,222,157), true, 200.0f, 1.0f);
-            greenMaterial.Init();
-            var yellowMaterial = new Material(Color.FromRGB(238,198,28), true, 200.0f, 1.0f);
-            yellowMaterial.Init();
-
-            m_BrickMaterials.Add(blueMaterial, yellowMaterial, greenMaterial);
-            
-            m_FloorTexture.Load("./Textures/floor.png");
+            var textureProgram = new ShaderProgram();
+            textureProgram.AddShader(ShaderType.VertexShader, "./Shaders/texture_vertex.glsl");
+            textureProgram.AddShader(ShaderType.FragmentShader, "./Shaders/texture_fragment.glsl");
+            textureProgram.Link();
 
             // Init Light
-            m_SunLight.Init();
-            m_SunLight.Set(
-                new Vec3(5, 10, 0), 
+            m_SunLight = new Light(new Vec3(5, 10, 0),
                 new Vec3(0.3f, 0.3f, 0.3f),
                 new Vec3(0.7f, 0.7f, 0.7f),
                 new Vec3(0.7f, 0.7f, 0.7f));
 
             // Init Camera
-            m_Camera.Init();
+            m_Camera = new Camera();
             Resize();
             m_Camera.LookAt(new Vec3(0, 100, 100f), new Vec3(0, 0, 0), Vec3.Up);
-            
-            // Init objects
-            m_SphereGeometry = GeometryGenerator.Sphere();
-            m_SphereTransform.Init();
-            m_SphereTransform.Set(new Vec3(0, 1.5f, 0), Mat3.Identity, Vec3.Unit*3);
-            
-            m_FloorGeometry = GeometryGenerator.CircleFloor();
-            m_FloorTransform.Init();
-            m_FloorTransform.Set(Vec3.Zero, Mat3.Identity, Vec3.Unit*50);
 
-            m_BrickGeometry = GeometryGenerator.Brick();
+            // Init game objects
+            m_Ball = new GameObject(
+                litProgram, 
+                GeometryGenerator.Sphere(), 
+                new Transform(new Vec3(0, 1.5f, 0), Vec3.Zero, Vec3.Unit * 3),
+                new Material(new Vec3(0f), new Vec3(0.55f), new Vec3(0.7f), 32f, 1.0f));
+            
+            m_Floor = new GameObject(
+                textureProgram,
+                GeometryGenerator.CircleFloor(),
+                new Transform(Vec3.Zero, Vec3.Zero, Vec3.Unit * 50),
+                new Material(new Vec3(0.8f, 0, 0), true, 200.0f, 1.0f),
+                new Texture("./Textures/floor.png"));
+            
+            m_Bats = new List<GameObject>();
+            var batGeometry = GeometryGenerator.Bat();
+            var batMaterial = new Material(Color.FromRGB(213, 8, 24), false, 200f, 1.0f);
+            for (var i = 0; i < 3; i++)
+            {
+                var transform = new Transform(new Vec3(0, 0, 40), Vec3.Zero, Vec3.Unit);
+                transform.RotateAround(120 * i * Vec3.Up, Vec3.Zero);
+                m_Bats.Add(new GameObject(
+                    litProgram,
+                    batGeometry,
+                    transform,
+                    batMaterial));
+            }
+            
+            var brickColors = new []
+            {
+                Color.FromRGB(54, 88, 229), 
+                Color.FromRGB(52, 222, 157), 
+                Color.FromRGB(238, 198, 28)
+            };
+            m_Bricks = new List<GameObject>();
+            var brickGeometry = GeometryGenerator.Brick();
+            var brickMaterials = brickColors.Select(color => new Material(color, true, 200.0f, 1.0f)).ToList();
             for (var i = 0; i < 12; i++)
             {
-                var transform = new Transform();
-                transform.Init();
-                transform.Set(new Vec3(0, 0, 12), Mat3.Identity, Vec3.Unit);
-                transform.RotateAround(Vec3.Up, i * (360 / 12), Vec3.Zero);
-                m_BrickTransforms.Add(transform);
+                var transform = new Transform(new Vec3(0, 0, 12), Vec3.Zero, Vec3.Unit);
+                transform.RotateAround(i * (360 /(float) 12) * Vec3.Up, Vec3.Zero);
+                m_Bricks.Add(new GameObject(
+                    litProgram,
+                    brickGeometry,
+                    transform,
+                    brickMaterials[i % brickMaterials.Count]));
             }
 
-            m_BatGeometry = GeometryGenerator.Bat();
-            m_BatTransforms[0].Init();
-            m_BatTransforms[0].Set(new Vec3(0, 0, 40), Mat3.Identity, Vec3.Unit);
-            m_BatTransforms[1].Init();
-            m_BatTransforms[1].Set(new Vec3(0, 0, 40), Mat3.Identity, Vec3.Unit);
-            m_BatTransforms[1].RotateAround(Vec3.Up, 120, Vec3.Zero);
-            m_BatTransforms[2].Init();
-            m_BatTransforms[2].Set(new Vec3(0, 0, 40), Mat3.Identity, Vec3.Unit);
-            m_BatTransforms[2].RotateAround(Vec3.Up, -120, Vec3.Zero);
-            
             // Init GL environment
-            Gl.ClearColor(0.1f, 0.1f, 0.12f, 0.1f);
+            var clearColor = Color.FromRGB(25, 25, 30);
+            Gl.ClearColor(clearColor.X, clearColor.Y, clearColor.Z, 1);
             Gl.Enable(EnableCap.DepthTest);
-            //Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            // Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
         }
-        
+
         // Update of the game - here should be all the physics
         public void UpdateScene()
         {
-            foreach (var transform in m_BatTransforms)
+            foreach (var bat in m_Bats)
             {
-                transform.RotateAround(Vec3.Up, 0.2f * Input.XAxis * Time.DeltaTime, Vec3.Zero);
+                bat.Transform.RotateAround(0.2f * Input.XAxis * Time.DeltaTime *Vec3.Up, Vec3.Zero);
             }
         }
 
@@ -137,41 +142,15 @@ namespace Breakout3D
             m_Camera.Bind();
             m_SunLight.Bind();
 
-            // Draw Sphere
-            m_LitProgram.Use();
-            
-            m_ChromeMaterial.Bind();
-            m_SphereTransform.Bind();
-            m_SphereGeometry.Bind();
-            m_SphereGeometry.Draw();
-            
-            // Draw Floor
-            m_TextureProgram.Use();
-            
-            m_FloorTexture.Bind(TextureUnit.Texture0);
-            m_DefaultMaterial.Bind();
-            m_FloorTransform.Bind();
-            m_FloorGeometry.Bind();
-            m_FloorGeometry.Draw();
-            
-            // Draw Bricks
-            m_LitProgram.Use();
-            
-            m_BrickGeometry.Bind();
-            for (var i = 0; i < m_BrickTransforms.Count; i++)
+            m_Ball.Draw();
+            m_Floor.Draw();
+            foreach (var bat in m_Bats)
             {
-                m_BrickTransforms[i].Bind();
-                m_BrickMaterials[i % 3].Bind();
-                m_BrickGeometry.Draw();
+                bat.Draw();
             }
-
-            // Draw Bats
-            m_BatGeometry.Bind();
-            m_BatMaterial.Bind();
-            foreach (var transform in m_BatTransforms)
+            foreach (var brick in m_Bricks)
             {
-                transform.Bind();
-                m_BatGeometry.Draw();
+                brick.Draw();
             }
         }
         
@@ -184,24 +163,19 @@ namespace Breakout3D
 
         public void Dispose()
         {
-            m_LitProgram.Dispose();
-            m_TextureProgram.Dispose();
-            
             m_Camera.Dispose();
             m_SunLight.Dispose();
-            
-            m_DefaultMaterial.Dispose();
-            m_BatMaterial.Dispose();
-            m_ChromeMaterial.Dispose();
-            m_FloorTexture.Dispose();
-            
-            m_SphereTransform.Dispose();
-            m_FloorTransform.Dispose();
-            m_SphereGeometry.Dispose();
-            
-            m_BrickGeometry.Dispose();
-            m_FloorGeometry.Dispose();
-            m_BatGeometry.Dispose();
+
+            m_Ball.Dispose();
+            m_Floor.Dispose();
+            foreach (var bat in m_Bats)
+            {
+                bat.Dispose();
+            }
+            foreach (var brick in m_Bricks)
+            {
+                brick.Dispose();
+            }
         }
     }
 }

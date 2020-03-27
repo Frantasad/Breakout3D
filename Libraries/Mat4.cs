@@ -119,12 +119,17 @@ namespace Breakout3D.Libraries
         {
             return new Mat4(Mat3.Scale(scale));
         }
-        
-        public static Mat4 Rotation(Vec3 rotationAxis, float angle)
+
+        public static Mat4 Rotation(Vec3 eulerAngles)
         {
-            return new Mat4(Mat3.Rotation(rotationAxis, angle));
+            return new Mat4(Mat3.Rotation(eulerAngles));
         }
-        
+
+        public Mat3 ToMat3()
+        {
+            return new Mat3(x00, x01, x02, x10, x11, x12, x20, x21, x22);
+        }
+
         public static Mat4 LookAt(Vec3 eye, Vec3 target, Vec3 upVector)
         {
             var f = (target - eye).Normalized;

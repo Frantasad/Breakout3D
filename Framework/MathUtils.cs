@@ -23,6 +23,16 @@ namespace Breakout3D.Framework
             }
             return num8;
         }
+        
+        public static float ToRadians(float angle)
+        {
+            return (float) (Math.PI / 180) * angle;
+        }
+        
+        public static float ToDegrees(float radians)
+        {
+            return (float) (180 / Math.PI) * radians;
+        }
     }
     
 }

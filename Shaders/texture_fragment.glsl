@@ -50,5 +50,5 @@ void main() {
 
 	vec3 final_color = tex_color * amb + tex_color * dif + material.specular * spe;
 
-    gl_FragColor = vec4(final_color, 1.0);
+    gl_FragColor = vec4(final_color, material.alpha);
 }

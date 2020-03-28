@@ -46,5 +46,5 @@ void main() {
 
 	vec3 final_color = material.ambient * amb + material.diffuse * dif + material.specular * spe;
 
-    gl_FragColor = vec4(final_color, 1.0);
+    gl_FragColor = vec4(final_color, material.alpha);
 }

@@ -1,4 +1,5 @@
 ﻿using Breakout3D.Libraries;
+using OpenGL;
 
 namespace Breakout3D.Framework
 {
@@ -28,9 +29,10 @@ namespace Breakout3D.Framework
             UpdateData();
         }
         
-        public void SetProjection(Mat4 projection)
+        public void SetPerspective(float fov, int width, int height, float near, float far)
         {
-            m_Data.Projection = projection;
+            m_Data.Projection = Mat4.Perspective(fov, width, height, near, far);
+            Gl.Viewport(0, 0, width, height);
             UpdateData();
         }
     }

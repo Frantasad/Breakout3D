@@ -54,7 +54,7 @@ namespace Breakout3D.Framework
             GenerateQuad(rPoints, ref data.Vertices, ref data.Normals); // Right face
             GenerateQuad(lPoints.Reverse().ToArray(), ref data.Vertices, ref data.Normals); // Left face
             GenerateQuad(new []{rPoints[3], rPoints[2], lPoints[2], lPoints[3]}, ref data.Vertices, ref data.Normals); // Top face
-            GenerateQuad(new []{lPoints[0], lPoints[1], rPoints[1], rPoints[0]}, ref data.Vertices, ref data.Normals); // Bottom face
+            //GenerateQuad(new []{lPoints[0], lPoints[1], rPoints[1], rPoints[0]}, ref data.Vertices, ref data.Normals); // Bottom face
             GenerateQuad(new []{rPoints[0], rPoints[3], lPoints[3], lPoints[0]}, ref data.Vertices, ref data.Normals); // Front face
             GenerateQuad(new []{lPoints[1], lPoints[2], rPoints[2], rPoints[1]}, ref data.Vertices, ref data.Normals); // Back face
 

@@ -67,7 +67,7 @@ namespace Breakout3D
             this.RenderControl.DepthBits = ((uint) (24u));
             this.RenderControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.RenderControl.Location = new System.Drawing.Point(0, 0);
-            this.RenderControl.MultisampleBits = ((uint) (4u));
+            this.RenderControl.MultisampleBits = ((uint) (8u));
             this.RenderControl.Name = "RenderControl";
             this.RenderControl.Size = new System.Drawing.Size(1106, 728);
             this.RenderControl.StencilBits = ((uint) (0u));
@@ -88,40 +88,40 @@ namespace Breakout3D
             {
                 this.Label_Status, this.StatusText, this.FlexibleSpace, this.UpdateTimeLabel, this.UpdateTimeValue
             });
-            this.StatusStrip.Location = new System.Drawing.Point(0, 699);
+            this.StatusStrip.Location = new System.Drawing.Point(0, 677);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(1106, 29);
+            this.StatusStrip.Size = new System.Drawing.Size(1106, 51);
             this.StatusStrip.TabIndex = 0;
             // 
             // Label_Status
             // 
             this.Label_Status.Name = "Label_Status";
-            this.Label_Status.Size = new System.Drawing.Size(45, 24);
+            this.Label_Status.Size = new System.Drawing.Size(45, 46);
             this.Label_Status.Text = "Status: ";
             // 
             // StatusText
             // 
             this.StatusText.Name = "StatusText";
-            this.StatusText.Size = new System.Drawing.Size(12, 24);
+            this.StatusText.Size = new System.Drawing.Size(12, 46);
             this.StatusText.Text = "-";
             // 
             // FlexibleSpace
             // 
             this.FlexibleSpace.Name = "FlexibleSpace";
-            this.FlexibleSpace.Size = new System.Drawing.Size(906, 24);
+            this.FlexibleSpace.Size = new System.Drawing.Size(906, 46);
             this.FlexibleSpace.Spring = true;
             // 
             // UpdateTimeLabel
             // 
             this.UpdateTimeLabel.Name = "UpdateTimeLabel";
-            this.UpdateTimeLabel.Size = new System.Drawing.Size(78, 24);
+            this.UpdateTimeLabel.Size = new System.Drawing.Size(78, 46);
             this.UpdateTimeLabel.Text = "Update time: ";
             // 
             // UpdateTimeValue
             // 
             this.UpdateTimeValue.AutoSize = false;
             this.UpdateTimeValue.Name = "UpdateTimeValue";
-            this.UpdateTimeValue.Size = new System.Drawing.Size(50, 24);
+            this.UpdateTimeValue.Size = new System.Drawing.Size(50, 46);
             this.UpdateTimeValue.Text = "-";
             this.UpdateTimeValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
@@ -213,7 +213,7 @@ namespace Breakout3D
             this.ScoreLabel.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Bold,
                 System.Drawing.GraphicsUnit.Point, ((byte) (238)));
             this.ScoreLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ScoreLabel.Location = new System.Drawing.Point(911, 38);
+            this.ScoreLabel.Location = new System.Drawing.Point(911, 62);
             this.ScoreLabel.Name = "ScoreLabel";
             this.ScoreLabel.Size = new System.Drawing.Size(82, 24);
             this.ScoreLabel.TabIndex = 3;
@@ -231,7 +231,7 @@ namespace Breakout3D
             this.LivesLabel.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Bold,
                 System.Drawing.GraphicsUnit.Point, ((byte) (238)));
             this.LivesLabel.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.LivesLabel.Location = new System.Drawing.Point(911, 74);
+            this.LivesLabel.Location = new System.Drawing.Point(911, 98);
             this.LivesLabel.Name = "LivesLabel";
             this.LivesLabel.Size = new System.Drawing.Size(82, 24);
             this.LivesLabel.TabIndex = 4;
@@ -248,7 +248,7 @@ namespace Breakout3D
             this.ScoreValue.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Bold,
                 System.Drawing.GraphicsUnit.Point, ((byte) (238)));
             this.ScoreValue.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.ScoreValue.Location = new System.Drawing.Point(1014, 38);
+            this.ScoreValue.Location = new System.Drawing.Point(1014, 62);
             this.ScoreValue.Name = "ScoreValue";
             this.ScoreValue.Size = new System.Drawing.Size(47, 28);
             this.ScoreValue.TabIndex = 5;
@@ -265,7 +265,7 @@ namespace Breakout3D
             this.LivesValue.Font = new System.Drawing.Font("Consolas", 15.75F, System.Drawing.FontStyle.Bold,
                 System.Drawing.GraphicsUnit.Point, ((byte) (238)));
             this.LivesValue.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.LivesValue.Location = new System.Drawing.Point(1014, 74);
+            this.LivesValue.Location = new System.Drawing.Point(1014, 98);
             this.LivesValue.Name = "LivesValue";
             this.LivesValue.Size = new System.Drawing.Size(47, 28);
             this.LivesValue.TabIndex = 6;

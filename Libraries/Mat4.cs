@@ -76,16 +76,17 @@ namespace Breakout3D.Libraries
             set => this[i * 4 + j] = value;
         }
 
-        public static Mat4 Perspective(float fovy, float aspectRatio, float near, float far)
+        public static Mat4 Perspective(float fov, int width, int height, float near, float far)
         {
-            if (fovy <= 0.0 || fovy >= 180.0)
-                throw new ArgumentOutOfRangeException(nameof(fovy), "Not in range (0, 180)");
+            var aspectRatio = width / (float) height;
+            if (fov <= 0.0 || fov >= 180.0)
+                throw new ArgumentOutOfRangeException(nameof(fov), "Not in range (0, 180)");
             if (Math.Abs(near) < 1.40129846432482E-45)
                 throw new ArgumentOutOfRangeException(nameof(near), "Zero not allowed");
             if (Math.Abs(far) < Math.Abs(near))
                 throw new ArgumentOutOfRangeException(nameof(far), "Less than near");
             
-            var top = near * (float) Math.Tan(Angle.ToRadians(fovy / 2f));
+            var top = near * (float) Math.Tan(Angle.ToRadians(fov / 2f));
             var right = top * aspectRatio;
             var left = -right;
             var bottom = -top;

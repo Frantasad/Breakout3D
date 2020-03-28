@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Breakout3D.Framework;
 using Breakout3D.Libraries;
 using OpenGL;
@@ -9,10 +10,7 @@ namespace Breakout3D
 {
     public class Game : IDisposable
     {
-        private  GameWindow m_Window;
-        
-        private readonly Camera m_Camera;
-        private readonly Light m_SunLight;
+        private readonly GameWindow m_Window;
         
         private int m_Score;
         public int Score
@@ -36,10 +34,12 @@ namespace Breakout3D
             }
         }
 
-        private GameObject m_Ball;
-        private GameObject m_Floor;
-        private List<GameObject> m_Bricks;
-        private List<GameObject> m_Bats;
+        private readonly Camera m_PerspectiveCamera;
+        private readonly Light m_SunLight;
+        private readonly GameObject m_Ball;
+        private readonly GameObject m_Floor;
+        private readonly List<GameObject> m_Bricks;
+        private readonly List<GameObject> m_Bats;
 
         public Game(GameWindow window)
         {
@@ -63,9 +63,9 @@ namespace Breakout3D
                 new Vec3(0.7f, 0.7f, 0.7f));
 
             // Init Camera
-            m_Camera = new Camera();
+            m_PerspectiveCamera = new Camera();
             Resize();
-            m_Camera.LookAt(new Vec3(0, 100, 100f), new Vec3(0, 0, 0), Vec3.Up);
+            m_PerspectiveCamera.LookAt(new Vec3(0, 100, 100f), new Vec3(0, 0, 0), Vec3.Up);
 
             // Init game objects
             m_Ball = new GameObject(
@@ -83,7 +83,7 @@ namespace Breakout3D
             
             m_Bats = new List<GameObject>();
             var batGeometry = GeometryGenerator.Bat();
-            var batMaterial = new Material(Color.FromRGB(213, 8, 24), false, 200f, 1.0f);
+            var batMaterial = new Material(Color.RGB(213, 8, 24), false, 200f, 1f);
             for (var i = 0; i < 3; i++)
             {
                 var transform = new Transform(new Vec3(0, 0, 40), Vec3.Zero, Vec3.Unit);
@@ -94,35 +94,43 @@ namespace Breakout3D
                     transform,
                     batMaterial));
             }
-            
-            var brickColors = new []
-            {
-                Color.FromRGB(54, 88, 229), 
-                Color.FromRGB(52, 222, 157), 
-                Color.FromRGB(238, 198, 28)
-            };
+
             m_Bricks = new List<GameObject>();
             var brickGeometry = GeometryGenerator.Brick();
-            var brickMaterials = brickColors.Select(color => new Material(color, true, 200.0f, 1.0f)).ToList();
-            for (var i = 0; i < 12; i++)
+            var brickMaterials = new [] {Color.RGB(54, 88, 229), Color.RGB(238, 198, 28)}
+                .Select(color => new Material(color, true, 200.0f, 1f)).ToList();
+            for (var y = 0; y < 3; y++)
             {
-                var transform = new Transform(new Vec3(0, 0, 12), Vec3.Zero, Vec3.Unit);
-                transform.RotateAround(i * (360 /(float) 12) * Vec3.Up, Vec3.Zero);
-                m_Bricks.Add(new GameObject(
-                    litProgram,
-                    brickGeometry,
-                    transform,
-                    brickMaterials[i % brickMaterials.Count]));
+                for (var i = 0; i < 12; i++)
+                {
+                    var transform = new Transform(new Vec3(0, y*4, 12), Vec3.Zero, Vec3.Unit);
+                    transform.RotateAround(i * (360 /(float) 12) * Vec3.Up, Vec3.Zero);
+                    m_Bricks.Add(new GameObject(
+                        litProgram,
+                        brickGeometry,
+                        transform,
+                        brickMaterials[(i + y) % brickMaterials.Count]));
+                }  
             }
+            
 
             // Init GL environment
-            var clearColor = Color.FromRGB(25, 25, 30);
+            var clearColor = Color.RGB(25, 25, 30);
             Gl.ClearColor(clearColor.X, clearColor.Y, clearColor.Z, 1);
             Gl.Enable(EnableCap.DepthTest);
-            // Gl.PolygonMode(MaterialFace.FrontAndBack, PolygonMode.Line);
+            Gl.Enable(EnableCap.Blend);
+            Gl.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            Gl.Enable(EnableCap.CullFace);
+            Gl.CullFace(CullFaceMode.Back);
+            Gl.PolygonMode(MaterialFace.Front, PolygonMode.Fill);
+            
+   
+
+            m_PerspectiveCamera.Bind();
+            m_SunLight.Bind();
         }
 
-        // Update of the game - here should be all the physics
+        // Update of the game (game logic, physics and animations)
         public void UpdateScene()
         {
             foreach (var bat in m_Bats)
@@ -131,7 +139,7 @@ namespace Breakout3D
             }
         }
 
-        // Render the whole scene - here should be only rendering
+        // Render the whole scene (only rendering)
         public void RenderScene()
         {
             // Clear all and setup
@@ -139,9 +147,6 @@ namespace Breakout3D
             Gl.Clear(ClearBufferMask.DepthBufferBit);
             Gl.ClearDepth(1.0);
             
-            m_Camera.Bind();
-            m_SunLight.Bind();
-
             m_Ball.Draw();
             m_Floor.Draw();
             foreach (var bat in m_Bats)
@@ -157,25 +162,17 @@ namespace Breakout3D
         // Called on windows resize event
         public void Resize()
         {
-            Gl.Viewport(0, 0, m_Window.Width, m_Window.Height);
-            m_Camera.SetProjection(Mat4.Perspective(45.0f, m_Window.Width/(float)m_Window.Height, 0.1f, 1000.0f));
+            m_PerspectiveCamera.SetPerspective(45.0f, m_Window.Width, m_Window.Height, 0.1f, 1000.0f);
         }
 
         public void Dispose()
         {
-            m_Camera.Dispose();
+            m_PerspectiveCamera.Dispose();
             m_SunLight.Dispose();
-
             m_Ball.Dispose();
             m_Floor.Dispose();
-            foreach (var bat in m_Bats)
-            {
-                bat.Dispose();
-            }
-            foreach (var brick in m_Bricks)
-            {
-                brick.Dispose();
-            }
+            m_Bats.Dispose();
+            m_Bricks.Dispose();
         }
     }
 }

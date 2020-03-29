@@ -41,15 +41,15 @@ namespace Breakout3D
             this.UpdateTimeLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.UpdateTimeValue = new System.Windows.Forms.ToolStripStatusLabel();
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
-            this.gameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newGameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.pauseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.gameMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.newGameMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem2 = new System.Windows.Forms.ToolStripSeparator();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.viewToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.perspectiveToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.topToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ballToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.exitMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.viewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.perspectiveViewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.topViewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.ballViewMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ScoreLabel = new System.Windows.Forms.Label();
             this.LivesLabel = new System.Windows.Forms.Label();
             this.ScoreValue = new System.Windows.Forms.Label();
@@ -60,16 +60,22 @@ namespace Breakout3D
             // 
             // RenderControl
             // 
+            this.RenderControl.Anchor =
+                ((System.Windows.Forms.AnchorStyles) ((((System.Windows.Forms.AnchorStyles.Top |
+                                                         System.Windows.Forms.AnchorStyles.Bottom) |
+                                                        System.Windows.Forms.AnchorStyles.Left) |
+                                                       System.Windows.Forms.AnchorStyles.Right)));
             this.RenderControl.Animation = true;
+            this.RenderControl.AnimationTime = 1;
             this.RenderControl.AnimationTimer = false;
+            this.RenderControl.AutoSize = true;
             this.RenderControl.BackColor = System.Drawing.Color.DimGray;
             this.RenderControl.ColorBits = ((uint) (32u));
             this.RenderControl.DepthBits = ((uint) (24u));
-            this.RenderControl.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.RenderControl.Location = new System.Drawing.Point(0, 0);
+            this.RenderControl.Location = new System.Drawing.Point(0, 27);
             this.RenderControl.MultisampleBits = ((uint) (8u));
             this.RenderControl.Name = "RenderControl";
-            this.RenderControl.Size = new System.Drawing.Size(1106, 728);
+            this.RenderControl.Size = new System.Drawing.Size(1106, 676);
             this.RenderControl.StencilBits = ((uint) (0u));
             this.RenderControl.TabIndex = 0;
             this.RenderControl.ContextCreated +=
@@ -88,47 +94,47 @@ namespace Breakout3D
             {
                 this.Label_Status, this.StatusText, this.FlexibleSpace, this.UpdateTimeLabel, this.UpdateTimeValue
             });
-            this.StatusStrip.Location = new System.Drawing.Point(0, 677);
+            this.StatusStrip.Location = new System.Drawing.Point(0, 703);
             this.StatusStrip.Name = "StatusStrip";
-            this.StatusStrip.Size = new System.Drawing.Size(1106, 51);
+            this.StatusStrip.Size = new System.Drawing.Size(1106, 25);
             this.StatusStrip.TabIndex = 0;
             // 
             // Label_Status
             // 
             this.Label_Status.Name = "Label_Status";
-            this.Label_Status.Size = new System.Drawing.Size(45, 46);
+            this.Label_Status.Size = new System.Drawing.Size(45, 20);
             this.Label_Status.Text = "Status: ";
             // 
             // StatusText
             // 
             this.StatusText.Name = "StatusText";
-            this.StatusText.Size = new System.Drawing.Size(12, 46);
+            this.StatusText.Size = new System.Drawing.Size(12, 20);
             this.StatusText.Text = "-";
             // 
             // FlexibleSpace
             // 
             this.FlexibleSpace.Name = "FlexibleSpace";
-            this.FlexibleSpace.Size = new System.Drawing.Size(906, 46);
+            this.FlexibleSpace.Size = new System.Drawing.Size(906, 20);
             this.FlexibleSpace.Spring = true;
             // 
             // UpdateTimeLabel
             // 
             this.UpdateTimeLabel.Name = "UpdateTimeLabel";
-            this.UpdateTimeLabel.Size = new System.Drawing.Size(78, 46);
+            this.UpdateTimeLabel.Size = new System.Drawing.Size(78, 20);
             this.UpdateTimeLabel.Text = "Update time: ";
             // 
             // UpdateTimeValue
             // 
             this.UpdateTimeValue.AutoSize = false;
             this.UpdateTimeValue.Name = "UpdateTimeValue";
-            this.UpdateTimeValue.Size = new System.Drawing.Size(50, 46);
+            this.UpdateTimeValue.Size = new System.Drawing.Size(50, 20);
             this.UpdateTimeValue.Text = "-";
             this.UpdateTimeValue.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // menuStrip1
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.gameToolStripMenuItem, this.viewToolStripMenuItem});
+                {this.gameMenuItem, this.viewMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(7, 2, 0, 2);
@@ -136,71 +142,74 @@ namespace Breakout3D
             this.menuStrip1.TabIndex = 2;
             this.menuStrip1.Text = "menuStrip1";
             // 
-            // gameToolStripMenuItem
+            // gameMenuItem
             // 
-            this.gameToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-            {
-                this.newGameToolStripMenuItem, this.pauseToolStripMenuItem, this.toolStripMenuItem2,
-                this.exitToolStripMenuItem
-            });
-            this.gameToolStripMenuItem.Name = "gameToolStripMenuItem";
-            this.gameToolStripMenuItem.Size = new System.Drawing.Size(50, 20);
-            this.gameToolStripMenuItem.Text = "Game";
+            this.gameMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+                {this.newGameMenuItem, this.pauseMenuItem, this.toolStripMenuItem2, this.exitMenuItem});
+            this.gameMenuItem.Name = "gameMenuItem";
+            this.gameMenuItem.Size = new System.Drawing.Size(50, 20);
+            this.gameMenuItem.Text = "Game";
             // 
-            // newGameToolStripMenuItem
+            // newGameMenuItem
             // 
-            this.newGameToolStripMenuItem.Name = "newGameToolStripMenuItem";
-            this.newGameToolStripMenuItem.ShortcutKeyDisplayString = "N";
-            this.newGameToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.newGameToolStripMenuItem.Text = "New Game";
+            this.newGameMenuItem.Name = "newGameMenuItem";
+            this.newGameMenuItem.ShortcutKeyDisplayString = "";
+            this.newGameMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.newGameMenuItem.Text = "New Game";
+            this.newGameMenuItem.Click += new System.EventHandler(this.newGameMenuItem_Click);
             // 
-            // pauseToolStripMenuItem
+            // pauseMenuItem
             // 
-            this.pauseToolStripMenuItem.Name = "pauseToolStripMenuItem";
-            this.pauseToolStripMenuItem.ShortcutKeyDisplayString = "P";
-            this.pauseToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.pauseToolStripMenuItem.Text = "Pause / Play";
+            this.pauseMenuItem.Name = "pauseMenuItem";
+            this.pauseMenuItem.ShortcutKeyDisplayString = "";
+            this.pauseMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.pauseMenuItem.Text = "Pause / Play";
+            this.pauseMenuItem.Click += new System.EventHandler(this.pauseMenuItem_Click);
             // 
             // toolStripMenuItem2
             // 
             this.toolStripMenuItem2.Name = "toolStripMenuItem2";
             this.toolStripMenuItem2.Size = new System.Drawing.Size(149, 6);
             // 
-            // exitToolStripMenuItem
+            // exitMenuItem
             // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.ShortcutKeyDisplayString = "Esc";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
+            this.exitMenuItem.Name = "exitMenuItem";
+            this.exitMenuItem.ShortcutKeyDisplayString = "";
+            this.exitMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitMenuItem.Text = "Exit";
+            this.exitMenuItem.Click += new System.EventHandler(this.exitMenuItem_Click);
             // 
-            // viewToolStripMenuItem
+            // viewMenuItem
             // 
-            this.viewToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
-                {this.perspectiveToolStripMenuItem, this.topToolStripMenuItem, this.ballToolStripMenuItem});
-            this.viewToolStripMenuItem.Name = "viewToolStripMenuItem";
-            this.viewToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.viewToolStripMenuItem.Text = "View";
+            this.viewMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[]
+                {this.perspectiveViewMenuItem, this.topViewMenuItem, this.ballViewMenuItem});
+            this.viewMenuItem.Name = "viewMenuItem";
+            this.viewMenuItem.Size = new System.Drawing.Size(44, 20);
+            this.viewMenuItem.Text = "View";
             // 
-            // perspectiveToolStripMenuItem
+            // perspectiveViewMenuItem
             // 
-            this.perspectiveToolStripMenuItem.Name = "perspectiveToolStripMenuItem";
-            this.perspectiveToolStripMenuItem.ShortcutKeyDisplayString = "num 1";
-            this.perspectiveToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.perspectiveToolStripMenuItem.Text = "Perspective";
+            this.perspectiveViewMenuItem.Name = "perspectiveViewMenuItem";
+            this.perspectiveViewMenuItem.ShortcutKeyDisplayString = "";
+            this.perspectiveViewMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.perspectiveViewMenuItem.Text = "Perspective";
+            this.perspectiveViewMenuItem.Click += new System.EventHandler(this.perspectiveViewMenuItem_Click);
             // 
-            // topToolStripMenuItem
+            // topViewMenuItem
             // 
-            this.topToolStripMenuItem.Name = "topToolStripMenuItem";
-            this.topToolStripMenuItem.ShortcutKeyDisplayString = "num 2";
-            this.topToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.topToolStripMenuItem.Text = "Top";
+            this.topViewMenuItem.Name = "topViewMenuItem";
+            this.topViewMenuItem.ShortcutKeyDisplayString = "";
+            this.topViewMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.topViewMenuItem.Text = "Top";
+            this.topViewMenuItem.Click += new System.EventHandler(this.topViewMenuItem_Click);
             // 
-            // ballToolStripMenuItem
+            // ballViewMenuItem
             // 
-            this.ballToolStripMenuItem.Name = "ballToolStripMenuItem";
-            this.ballToolStripMenuItem.ShortcutKeyDisplayString = "num 3";
-            this.ballToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.ballToolStripMenuItem.Text = "Ball";
+            this.ballViewMenuItem.Name = "ballViewMenuItem";
+            this.ballViewMenuItem.ShortcutKeyDisplayString = "";
+            this.ballViewMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.ballViewMenuItem.Text = "Ball";
+            this.ballViewMenuItem.Click += new System.EventHandler(this.ballViewMenuItem_Click);
             // 
             // ScoreLabel
             // 
@@ -309,15 +318,15 @@ namespace Breakout3D
         private System.Windows.Forms.Label ScoreValue;
         private System.Windows.Forms.Label LivesLabel;
         private System.Windows.Forms.Label ScoreLabel;
-        private System.Windows.Forms.ToolStripMenuItem ballToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem topToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem perspectiveToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem2;
-        private System.Windows.Forms.ToolStripMenuItem pauseToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem viewToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newGameToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem gameToolStripMenuItem;
         private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.ToolStripMenuItem gameMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem newGameMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem exitMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem viewMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem pauseMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem perspectiveViewMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem topViewMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem ballViewMenuItem;
     }
 }

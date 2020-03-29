@@ -10,10 +10,22 @@ namespace Breakout3D
     public partial class GameWindow : Form
     {
         private Game m_Game;
+        
+        public UserControl OpenGlWindow => RenderControl;
 
         public GameWindow()
         {
             InitializeComponent();
+        }
+        
+        public void UpdateScore(int value)
+        {
+            ScoreValue.Text = $"{value}";
+        }
+        
+        public void UpdateLives(int value)
+        {
+            LivesValue.Text = $"{value}";
         }
         
         private void OnContextCreated(object sender, GlControlEventArgs e)
@@ -37,7 +49,7 @@ namespace Breakout3D
         
         private void OnResize(object sender, EventArgs e)
         {
-            m_Game?.Resize();
+            m_Game?.Resize(m_Game.CurrentCamera);
         }
 
         private void OnKeyDown(object sender, KeyEventArgs e)
@@ -54,15 +66,35 @@ namespace Breakout3D
         {
             Input.PreviewKeyDown(sender, e);
         }
-        
-        public void UpdateScore(int value)
+
+        private void perspectiveViewMenuItem_Click(object sender, EventArgs e)
         {
-            ScoreValue.Text = $"{value}";
+            m_Game.CurrentCamera = m_Game.PerspectiveCamera;
         }
-        
-        public void UpdateLives(int value)
+
+        private void topViewMenuItem_Click(object sender, EventArgs e)
         {
-            LivesValue.Text = $"{value}";
+            m_Game.CurrentCamera = m_Game.TopCamera;
+        }
+
+        private void ballViewMenuItem_Click(object sender, EventArgs e)
+        {
+            StatusText.Text = "Not Implemented!";
+        }
+
+        private void newGameMenuItem_Click(object sender, EventArgs e)
+        {
+            StatusText.Text = "Not Implemented!";
+        }
+
+        private void pauseMenuItem_Click(object sender, EventArgs e)
+        {
+            StatusText.Text = "Not Implemented!";
+        }
+
+        private void exitMenuItem_Click(object sender, EventArgs e)
+        {
+            Application.Exit();
         }
     }
 }

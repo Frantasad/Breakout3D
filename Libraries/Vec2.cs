@@ -4,7 +4,7 @@ namespace Breakout3D.Libraries
 {
     public struct Vec2
     {
-        private const float Epsilon = 0.00001f;
+        private const float Epsilon = (float) 10e-5;
         
         public static readonly Vec2 Up = new Vec2(0, 1);
         public static readonly Vec2 Right = new Vec2(1, 0);

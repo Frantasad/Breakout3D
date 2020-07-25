@@ -66,14 +66,12 @@ namespace Breakout3D
                                                         System.Windows.Forms.AnchorStyles.Left) |
                                                        System.Windows.Forms.AnchorStyles.Right)));
             this.RenderControl.Animation = true;
-            this.RenderControl.AnimationTime = 1;
-            this.RenderControl.AnimationTimer = false;
             this.RenderControl.AutoSize = true;
             this.RenderControl.BackColor = System.Drawing.Color.DimGray;
             this.RenderControl.ColorBits = ((uint) (32u));
             this.RenderControl.DepthBits = ((uint) (24u));
             this.RenderControl.Location = new System.Drawing.Point(0, 27);
-            this.RenderControl.MultisampleBits = ((uint) (8u));
+            this.RenderControl.MultisampleBits = ((uint) (4u));
             this.RenderControl.Name = "RenderControl";
             this.RenderControl.Size = new System.Drawing.Size(1106, 676);
             this.RenderControl.StencilBits = ((uint) (0u));

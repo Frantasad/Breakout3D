@@ -55,6 +55,11 @@ namespace Breakout3D
 
         public Game(GameWindow window)
         {
+            var a = new Ray(new Vec3(0,5,0), Vec3.Up);
+            var b = new Ray(new Vec3(0,0,0), Vec3.Right);
+            Console.Out.WriteLine(a.DistanceTo(b));
+            
+            
             m_Window = window;
             
             // Init shaders
@@ -99,7 +104,7 @@ namespace Breakout3D
             
             Bats = new List<GameObject>();
             var batGeometry = GeometryGenerator.Bat();
-            var batMaterial = new Material(Color.RGB(213, 8, 24), false, 200f, 1f);
+            var batMaterial = new Material(Color.RGB(213, 8, 24), false, 200f, 1.0f);
             for (var i = 0; i < 3; i++)
             {
                 var transform = new Transform(new Vec3(0, 0, 40), Vec3.Zero, Vec3.Unit);
@@ -114,7 +119,7 @@ namespace Breakout3D
             Bricks = new List<GameObject>();
             var brickGeometry = GeometryGenerator.Brick();
             var brickMaterials = new [] {Color.RGB(54, 88, 229), Color.RGB(238, 198, 28)}
-                .Select(color => new Material(color, true, 200.0f, 1f)).ToList();
+                .Select(color => new Material(color, true, 200.0f, 0.8f)).ToList();
             for (var y = 0; y < 3; y++)
             {
                 for (var i = 0; i < 12; i++)

@@ -4,24 +4,25 @@ namespace Breakout3D.Libraries
 {
     public class Ray
     {
-        public Vec3 Point { get; }
+        private const float Epsilon = (float) 10e-6;
+
+    public Vec3 Origin { get; }
         public Vec3 Direction { get; }
 
-        public Ray(Vec3 point, Vec3 direction)
+        public Ray(Vec3 origin, Vec3 direction)
         {
-            Point = point;
+            Origin = origin;
             Direction = direction;
         }
 
         public float DistanceTo(Ray ray)
         {
-            throw new NotImplementedException();
+            return 0;
         }
-        
+
         public float DistanceTo(Vec3 point)
         {
-            throw new NotImplementedException();
+            return Direction.Cross(point - Origin).Magnitude;
         }
-        
     }
 }

@@ -74,6 +74,8 @@ namespace Breakout3D.Framework
             } 
         }
         
+        public Vec3 Right => Mat3.Rotation(Rotation) * Vec3.Right;
+
         public Vec3 Rotation
         {
             get => m_Rotation;

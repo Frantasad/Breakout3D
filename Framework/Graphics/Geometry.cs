@@ -14,7 +14,7 @@ namespace Breakout3D.Framework
         public List<Vec2> TexCoords = new List<Vec2>();
     }
     
-    public class Geometry : IDisposable
+    public class Geometry : Component, IDisposable
     {
         public const int POSITION_LOCATION = 0;
         public const int NORMAL_LOCATION = 1;
@@ -25,10 +25,13 @@ namespace Breakout3D.Framework
         private uint m_TexCoordBuffer;
         
         public uint VAO { get; private set; }
+
         private PrimitiveType m_PrimitiveType = PrimitiveType.Triangles;
         private int m_VerticesCount;
         
-        public Geometry(PrimitiveType primitiveType = PrimitiveType.Triangles)
+        public GeometryData GeometryData { get; private set; }
+        
+        public Geometry(GeometryData geometryData, PrimitiveType primitiveType = PrimitiveType.Triangles)
         {
             m_PrimitiveType = primitiveType;
         }
@@ -43,7 +46,7 @@ namespace Breakout3D.Framework
             Gl.DrawArrays(m_PrimitiveType, 0, m_VerticesCount);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Gl.DeleteBuffers(m_VertexBuffer, m_NormalBuffer, m_TexCoordBuffer);
             Gl.DeleteVertexArrays(VAO);
@@ -67,16 +70,17 @@ namespace Breakout3D.Framework
             {
                 texCoords.AddRange(texCoord.ToArray());
             }
-            return GenerateGeometry(vertices.ToArray(), normals.ToArray(), texCoords.ToArray(), primitiveType);
+            var geometry = GenerateGeometry(geometryData, vertices.ToArray(), normals.ToArray(), texCoords.ToArray(), primitiveType);
+            return geometry;
         }
 
-        public static Geometry GenerateGeometry(float[] vertices, float[] normals, float[] texCoords, PrimitiveType primitiveType = PrimitiveType.Triangles)
+        public static Geometry GenerateGeometry(GeometryData geometryData, float[] vertices, float[] normals, float[] texCoords, PrimitiveType primitiveType = PrimitiveType.Triangles)
         {
             if (vertices.Length%3 != 0 || normals.Length%3 != 0 || texCoords.Length%2 != 0)
             {
                 throw new ArgumentException($"Invalid count of input variables");
             }
-            var geometry = new Geometry(primitiveType);
+            var geometry = new Geometry(geometryData, primitiveType);
             geometry.m_VerticesCount = vertices.Length/3;
 
             geometry.VAO = Gl.GenVertexArray();

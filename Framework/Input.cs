@@ -13,7 +13,10 @@ namespace Breakout3D.Framework
             {Keys.Up, false},
             {Keys.Down, false}
         };
-        
+
+        public delegate void KeyPressedDelegate(Keys key);
+        public static event KeyPressedDelegate? KeyPressed;
+            
         public static float XAxis { get; private set; }
 
         public static bool IsKeyPressed(Keys key)
@@ -43,6 +46,7 @@ namespace Breakout3D.Framework
             if (PressedKeys.ContainsKey(e.KeyCode))
             {
                 PressedKeys[e.KeyCode] = true;
+                OnKeyPressed(e.KeyCode);
             }
         }
 
@@ -52,6 +56,11 @@ namespace Breakout3D.Framework
             {
                 PressedKeys[e.KeyCode] = false;
             }
+        }
+
+        private static void OnKeyPressed(Keys key)
+        {
+            KeyPressed?.Invoke(key);
         }
     }
 }

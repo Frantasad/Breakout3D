@@ -1,11 +1,10 @@
 ﻿using System;
+using Breakout3D.Framework;
 
 namespace Breakout3D.Libraries
 {
     public struct Vec2
     {
-        private const float Epsilon = (float) 10e-5;
-        
         public static readonly Vec2 Up = new Vec2(0, 1);
         public static readonly Vec2 Right = new Vec2(1, 0);
         
@@ -51,8 +50,8 @@ namespace Breakout3D.Libraries
         
         public static bool operator==(Vec2 first, Vec2 second)
         {
-            return Math.Abs(first.X - second.X) < Epsilon &&
-                   Math.Abs(first.Y - second.Y) < Epsilon;
+            return Math.Abs(first.X - second.X) < MathUtils.Epsilon &&
+                   Math.Abs(first.Y - second.Y) < MathUtils.Epsilon;
         }
                 
         public static bool operator!=(Vec2 first, Vec2 second)

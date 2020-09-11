@@ -7,7 +7,7 @@ using PixelFormat = System.Drawing.Imaging.PixelFormat;
 
 namespace Breakout3D.Framework
 {
-    public class Texture : IDisposable
+    public class Texture : Component
     {
         public uint TextureId { get; private set; }
         
@@ -40,7 +40,7 @@ namespace Breakout3D.Framework
             Gl.BindTexture(TextureTarget.Texture2d, TextureId);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Gl.DeleteTextures(TextureId);
         }

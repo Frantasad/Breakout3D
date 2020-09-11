@@ -5,7 +5,7 @@ using OpenGL;
 
 namespace Breakout3D.Framework
 {
-    public class ShaderProgram : IDisposable
+    public class ShaderProgram : Component
     {
         public uint ProgramId { get; private set; }
         public List<Shader> Shaders { get;} = new List<Shader>();
@@ -48,7 +48,7 @@ namespace Breakout3D.Framework
             return true;
         }
         
-        public void Dispose()
+        public override void Dispose()
         {
             foreach (var shader in Shaders)
             {

@@ -13,7 +13,7 @@ namespace Breakout3D.Framework
         public const uint LIGHT_BINDING = 3;
     }
     
-    public abstract class UniformBuffer<T> : IDisposable where T : struct
+    public abstract class UniformBuffer<T> : Component where T : struct
     {
         public abstract uint Binding { get; }
         
@@ -58,7 +58,7 @@ namespace Breakout3D.Framework
             Gl.BindBuffer(BufferTarget.UniformBuffer, 0);
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
             Gl.DeleteBuffers(1, BufferId);
             BufferId = 0;

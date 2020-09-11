@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
 using Breakout3D.Framework;
 using Breakout3D.Libraries;
 using OpenGL;
@@ -9,6 +10,8 @@ namespace Breakout3D
 {
     public class Game : IDisposable
     {
+        public static Game Instance { get; private set; }
+        
         private readonly GameWindow m_Window;
         
         private int m_Score;
@@ -44,6 +47,8 @@ namespace Breakout3D
                 CurrentCamera.Bind();
             }
         }
+        
+        public float BatSpeed { get; private set; }
 
         public readonly Camera PerspectiveCamera;
         public readonly Camera TopCamera;
@@ -52,14 +57,12 @@ namespace Breakout3D
         public readonly GameObject Floor;
         public readonly List<GameObject> Bricks;
         public readonly List<GameObject> Bats;
+        
+        public readonly List<GameObject> AllGameObjects;
 
         public Game(GameWindow window)
         {
-            var a = new Ray(new Vec3(0,5,0), Vec3.Up);
-            var b = new Ray(new Vec3(0,0,0), Vec3.Right);
-            Console.Out.WriteLine(a.DistanceTo(b));
-            
-            
+            Instance = this;
             m_Window = window;
             
             // Init shaders
@@ -92,7 +95,9 @@ namespace Breakout3D
             Ball = new GameObject(
                 litProgram, 
                 GeometryGenerator.Sphere(), 
-                new Transform(new Vec3(0, 1.5f, 0), Vec3.Zero, Vec3.Unit * 3),
+                new Transform(new Vec3(20, 1.5f, 0), Vec3.Zero, Vec3.Unit * 3),
+                new RigidBody(1000f), 
+                new SphereCollider(1.5f), 
                 new Material(new Vec3(0f), new Vec3(0.55f), new Vec3(0.7f), 32f, 1.0f));
             
             Floor = new GameObject(
@@ -100,6 +105,7 @@ namespace Breakout3D
                 GeometryGenerator.CircleFloor(),
                 new Transform(Vec3.Zero, Vec3.Zero, Vec3.Unit * 50),
                 new Material(new Vec3(0.8f, 0, 0), true, 400.0f, 1.0f),
+                new InfinitePlaneCollider(),
                 new Texture("./Textures/floor.png"));
             
             Bats = new List<GameObject>();
@@ -107,12 +113,13 @@ namespace Breakout3D
             var batMaterial = new Material(Color.RGB(213, 8, 24), false, 200f, 1.0f);
             for (var i = 0; i < 3; i++)
             {
-                var transform = new Transform(new Vec3(0, 0, 40), Vec3.Zero, Vec3.Unit);
+                var transform = new Transform(new Vec3(0, 0, Segment.Bat.Close), Vec3.Zero, Vec3.Unit);
                 transform.RotateAround(120 * i * Vec3.Up, Vec3.Zero);
                 Bats.Add(new GameObject(
                     litProgram,
                     batGeometry,
                     transform,
+                    new SegmentCollider(Segment.Bat), 
                     batMaterial));
             }
 
@@ -124,15 +131,21 @@ namespace Breakout3D
             {
                 for (var i = 0; i < 12; i++)
                 {
-                    var transform = new Transform(new Vec3(0, y*4, 12), Vec3.Zero, Vec3.Unit);
-                    transform.RotateAround(i * (360 /(float) 12) * Vec3.Up, Vec3.Zero);
+                    var transform = new Transform(new Vec3(0, y*4, Segment.Brick.Close), Vec3.Zero, Vec3.Unit);
+                    transform.RotateAround((i * (360f / 12f)) * Vec3.Up, Vec3.Zero);
                     Bricks.Add(new GameObject(
                         litProgram,
                         brickGeometry,
                         transform,
+                        new RigidBody(1000f), 
+                        new SegmentCollider(Segment.Brick), 
                         brickMaterials[(i + y) % brickMaterials.Count]));
                 }  
             }
+
+            AllGameObjects = new List<GameObject>{Ball, Floor};
+            AllGameObjects.AddRange(Bats);
+            AllGameObjects.AddRange(Bricks);
             
             // Init GL environment
             var clearColor = Color.RGB(25, 25, 30);
@@ -146,17 +159,9 @@ namespace Breakout3D
 
             CurrentCamera = PerspectiveCamera;
             SunLight.Bind();
+            OnStart();
         }
-
-        // Update of the game (game logic, physics and animations)
-        public void UpdateScene()
-        {
-            foreach (var bat in Bats)
-            {
-                bat.Transform.RotateAround(0.2f * Input.XAxis * Time.DeltaTime * Vec3.Up, Vec3.Zero);
-            }
-        }
-
+        
         // Render the whole scene (only rendering)
         public void RenderScene()
         {
@@ -164,16 +169,11 @@ namespace Breakout3D
             Gl.Clear(ClearBufferMask.ColorBufferBit);
             Gl.Clear(ClearBufferMask.DepthBufferBit);
             Gl.ClearDepth(1.0);
-            
-            Ball.Draw();
-            Floor.Draw();
-            foreach (var bat in Bats)
+
+            foreach (var gameObject in AllGameObjects)
             {
-                bat.Draw();
-            }
-            foreach (var brick in Bricks)
-            {
-                brick.Draw();
+                if(!gameObject.Enabled) continue;
+                gameObject.Draw();
             }
         }
         
@@ -191,6 +191,87 @@ namespace Breakout3D
             Floor.Dispose();
             Bats.Dispose();
             Bricks.Dispose();
+        }
+        
+               
+        // First frame of the game
+        public void OnStart()
+        {
+            // Start all GameObjects
+            foreach (var gameObject in AllGameObjects)
+            {
+                if(!gameObject.Enabled) continue;
+                gameObject.OnStart();
+            }
+
+            foreach (var bat in Bats)
+            {
+                bat.Transform.RotateAround(0.2f * Input.XAxis * Time.DeltaTime * Vec3.Up, Vec3.Zero);
+            }
+
+            Ball.Collider.Collision += (other, collision, normal) =>
+            {
+                if (Bricks.Contains(other.GameObject))
+                {
+                    // Remove brick
+                    other.GameObject.Enabled = false;
+                    Bricks.Remove(other.GameObject);
+                }
+                
+                if (Bats.Contains(other.GameObject))
+                {
+                    // Rotate velocity a bit if bats are moving
+                    Ball.RigidBody.Velocity = Mat3.Rotation(Vec3.Up * BatSpeed * 8f) * Ball.RigidBody.Velocity;
+                }
+            };
+
+            Ball.RigidBody.Velocity = new Vec3(0.02f,0,0);
+
+            Input.KeyPressed += key =>
+            {
+                if (key != Keys.Up) return;
+                
+                var index = new Random().Next(Bricks.Count);
+                Bricks[index].Enabled = false;
+                Bricks.RemoveAt(index);
+            }; 
+            
+            Input.KeyPressed += key =>
+            {
+                if (key != Keys.Down) return;
+
+                Ball.RigidBody.Velocity =  Mat3.Rotation(Vec3.Up * 10) * Ball.RigidBody.Velocity;
+            }; 
+            
+        }
+
+        // Update of the game (game logic, physics and animations)
+        public void OnUpdate()
+        {
+            BatSpeed = 0.15f * Input.XAxis * Time.DeltaTime;
+            foreach (var bat in Bats)
+            {
+                bat.Transform.RotateAround(BatSpeed * Vec3.Up, Vec3.Zero);
+            }
+
+            foreach (var brick in Bricks)
+            {
+                brick.RigidBody?.ApplyForce(new Vec3(0,-0.1f,0));
+            }
+
+            // Update all GameObjects
+            foreach (var gameObject in AllGameObjects)
+            {
+                if(!gameObject.Enabled) continue;
+                gameObject.OnUpdate();
+            }
+            
+            // Update all GameObjects later
+            foreach (var gameObject in AllGameObjects)
+            {
+                if(!gameObject.Enabled) continue;
+                gameObject.OnLateUpdate();
+            }
         }
     }
 }

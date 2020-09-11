@@ -4,6 +4,8 @@ namespace Breakout3D.Framework
 {
     public static class MathUtils
     {
+        public const float Epsilon = (float) 10e-5;
+        
         public static float SmoothDamp(float current, float target, ref float currentVelocity, float smoothTime, float deltaTime)
         {
             smoothTime = Math.Max(0.0001f, smoothTime);

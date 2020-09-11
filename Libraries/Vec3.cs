@@ -1,12 +1,11 @@
 ﻿using System;
+using System.Numerics;
 using Breakout3D.Framework;
 
 namespace Breakout3D.Libraries
 {
     public struct Vec3
     {
-        private const float Epsilon = (float) 10e-5;
-        
         public static readonly Vec3 Zero = new Vec3(0, 0, 0);
         public static readonly Vec3 Unit = new Vec3(1, 1, 1);
         public static readonly Vec3 Up = new Vec3(0, 1, 0);
@@ -17,14 +16,15 @@ namespace Breakout3D.Libraries
         public readonly float Y;
         public readonly float Z;
 
-        public float Magnitude => (float) Math.Sqrt(X*X + Y*Y + Z*Z);
+        public float Magnitude => (float) Math.Sqrt(SqrMagnitude);
+        public float SqrMagnitude => X*X + Y*Y + Z*Z;
         
         public Vec3 Normalized
         {
             get
             {
                 var mag = Magnitude;
-                if (mag > Epsilon)
+                if (mag > MathUtils.Epsilon)
                     return this / mag;
                 return Zero; 
             }
@@ -44,7 +44,14 @@ namespace Breakout3D.Libraries
             Z = x;
         }
         
-        public Vec3 Cross(Vec3 other)
+        public Vec3(Vec3 other)
+        {
+            X = other.X;
+            Y = other.Y;
+            Z = other.Z;
+        }
+        
+        public readonly Vec3 Cross(Vec3 other)
         {
             return Cross(this, other);
         }
@@ -62,6 +69,11 @@ namespace Breakout3D.Libraries
             return Vec3.Dot(this, other);
         }
         
+        public float DistanceTo(Vec3 other)
+        {
+            return Distance(this, other);
+        }
+        
         public static float Dot(Vec3 first, Vec3 second)
         {
             return first.X * second.X + first.Y * second.Y + first.Z * second.Z;
@@ -72,6 +84,26 @@ namespace Breakout3D.Libraries
             var a = v1 - v0;
             var b = v2 - v0;
             return Cross(a, b).Normalized;
+        }
+
+        public static float Distance(Vec3 first, Vec3 second)
+        {
+            return (second - first).Magnitude;
+        }
+        
+        public static Vec3 Reflect(Vec3 inDirection, Vec3 inNormal)
+        {
+            var num = -2f * inNormal.Dot(inDirection);
+            return new Vec3(
+                num * inNormal.X + inDirection.X, 
+                num * inNormal.Y + inDirection.Y, 
+                num * inNormal.Z + inDirection.Z);
+        }
+
+        public static float CheckLeftRight(Vec3 point, Vec3 close, Vec3 far)
+        {
+            return (point.X - close.X) * (far.Z - close.Z) - 
+                   (point.Z - close.Z) * (far.X - close.X);
         }
 
         public static Vec3 operator +(Vec3 first, Vec3 second)
@@ -111,14 +143,29 @@ namespace Breakout3D.Libraries
         
         public static bool operator==(Vec3 first, Vec3 second)
         {
-            return Math.Abs(first.X - second.X) < Epsilon && 
-                   Math.Abs(first.Y - second.Y) < Epsilon && 
-                   Math.Abs(first.Z - second.Z) < Epsilon;
+            return Math.Abs(first.X - second.X) < MathUtils.Epsilon && 
+                   Math.Abs(first.Y - second.Y) < MathUtils.Epsilon && 
+                   Math.Abs(first.Z - second.Z) < MathUtils.Epsilon;
         }
         
         public static bool operator!=(Vec3 first, Vec3 second)
         {
             return !(first == second);
+        }
+
+        public Vec3 WithX(float x)
+        {
+            return new Vec3(x, Y, Z);
+        }
+        
+        public Vec3 WithY(float y)
+        {
+            return new Vec3(X, y, Z);
+        }
+        
+        public Vec3 WithZ(float z)
+        {
+            return new Vec3(X, Y, z);
         }
         
         public bool Equals(Vec3 other)

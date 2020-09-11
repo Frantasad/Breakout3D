@@ -38,7 +38,7 @@ namespace Breakout3D
             Time.RestartMeasure();
             UpdateTimeValue.Text = $"{Time.DeltaTime}ms";
             Input.HandleInput();
-            m_Game.UpdateScene();
+            m_Game.OnUpdate();
             m_Game.RenderScene();
         }
 
